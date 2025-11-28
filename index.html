@@ -7,17 +7,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #4361ee;
-            --primary-light: #4895ef;
-            --secondary: #3f37c9;
-            --success: #2ecc71;
-            --danger: #f72585;
-            --warning: #f8961e;
-            --light: #f8f9fa;
-            --dark: #212529;
-            --gray: #6c757d;
+            --primary: #1e40af;
+            --primary-light: #3b82f6;
+            --primary-dark: #1e3a8a;
+            --primary-soft: #dbeafe;
+            --secondary: #0369a1;
+            --success: #059669;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
             --border-radius: 16px;
-            --box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --box-shadow: 0 8px 32px rgba(30, 64, 175, 0.1);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
@@ -29,7 +29,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
             color: var(--dark);
             line-height: 1.6;
             min-height: 100vh;
@@ -62,13 +62,13 @@
             left: 0;
             width: 100%;
             height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--success));
+            background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--secondary));
         }
         
         h1 {
             font-size: 2.75rem;
             margin-bottom: 0.75rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -82,6 +82,7 @@
             max-width: 600px;
             margin: 0 auto;
             font-weight: 400;
+            color: var(--primary-dark);
         }
         
         .actions {
@@ -108,21 +109,23 @@
             transition: var(--transition);
             text-align: center;
             text-decoration: none;
-            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+            box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
         }
         
         .btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
+            box-shadow: 0 8px 25px rgba(30, 64, 175, 0.4);
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
         }
         
         .btn-success {
-            background: linear-gradient(135deg, var(--success), #27ae60);
-            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+            background: linear-gradient(135deg, var(--success), #047857);
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
         }
         
         .btn-success:hover {
-            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.4);
+            box-shadow: 0 8px 25px rgba(5, 150, 105, 0.4);
+            background: linear-gradient(135deg, #047857, #065f46);
         }
         
         .quiz-grid {
@@ -161,7 +164,7 @@
         
         .quiz-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 20px 40px rgba(30, 64, 175, 0.15);
         }
         
         .quiz-card:hover::before {
@@ -178,7 +181,7 @@
         .quiz-title {
             font-size: 1.4rem;
             font-weight: 700;
-            color: var(--primary);
+            color: var(--primary-dark);
             margin-bottom: 0.75rem;
             line-height: 1.3;
         }
@@ -186,12 +189,12 @@
         .quiz-course {
             font-size: 0.85rem;
             color: white;
-            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
             padding: 0.4rem 1rem;
             border-radius: 50px;
             display: inline-block;
             font-weight: 600;
-            box-shadow: 0 2px 8px rgba(67, 97, 238, 0.2);
+            box-shadow: 0 2px 8px rgba(30, 64, 175, 0.2);
         }
         
         .quiz-author {
@@ -205,7 +208,7 @@
         
         .quiz-author i {
             color: var(--primary);
-            background: rgba(67, 97, 238, 0.1);
+            background: rgba(30, 64, 175, 0.1);
             padding: 0.5rem;
             border-radius: 50%;
         }
@@ -228,7 +231,7 @@
             color: var(--dark);
             line-height: 1.6;
             padding: 1.25rem;
-            background: rgba(67, 97, 238, 0.05);
+            background: rgba(30, 64, 175, 0.05);
             border-radius: 12px;
             border-left: 4px solid var(--primary);
             font-style: italic;
@@ -245,7 +248,7 @@
             font-size: 0.8rem;
             color: var(--gray);
             font-family: 'JetBrains Mono', monospace;
-            background: rgba(0, 0, 0, 0.05);
+            background: rgba(30, 64, 175, 0.05);
             padding: 0.4rem 0.8rem;
             border-radius: 8px;
         }
@@ -264,6 +267,7 @@
             font-size: 4rem;
             margin-bottom: 1.5rem;
             opacity: 0.5;
+            color: var(--primary);
         }
         
         .search-container {
@@ -285,7 +289,7 @@
         .search-box input {
             flex: 1;
             padding: 1rem 1.5rem;
-            border: 2px solid rgba(67, 97, 238, 0.1);
+            border: 2px solid rgba(30, 64, 175, 0.1);
             border-radius: 50px;
             font-size: 1rem;
             transition: var(--transition);
@@ -295,7 +299,7 @@
         .search-box input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
             background: white;
         }
         
@@ -307,7 +311,7 @@
         
         .filter-label {
             font-weight: 700;
-            color: var(--dark);
+            color: var(--primary-dark);
             font-size: 1rem;
             display: flex;
             align-items: center;
@@ -340,24 +344,26 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.75rem 1.5rem;
-            border: 2px solid rgba(67, 97, 238, 0.2);
+            border: 2px solid rgba(30, 64, 175, 0.2);
             border-radius: 50px;
             transition: var(--transition);
             font-weight: 500;
             background: rgba(255, 255, 255, 0.8);
+            color: var(--primary-dark);
         }
         
         .filter-option input:checked + .filter-label-text {
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: white;
             border-color: var(--primary);
-            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+            box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
             transform: translateY(-2px);
         }
         
         .filter-option:hover .filter-label-text {
             border-color: var(--primary);
             transform: translateY(-2px);
+            background: rgba(30, 64, 175, 0.05);
         }
         
         .stats {
@@ -376,11 +382,11 @@
         
         .sort-select {
             background: rgba(255, 255, 255, 0.9);
-            border: 2px solid rgba(67, 97, 238, 0.2);
+            border: 2px solid rgba(30, 64, 175, 0.2);
             border-radius: 50px;
             padding: 0.5rem 1rem;
             font-size: 0.9rem;
-            color: var(--dark);
+            color: var(--primary-dark);
             cursor: pointer;
             transition: var(--transition);
         }
@@ -458,7 +464,7 @@
     <div class="container">
         <header>
             <h1><i class="fas fa-graduation-cap"></i> QuizHub</h1>
-            <p class="subtitle">Discover and take quizzes created by educators worldwide</p>
+            <p class="subtitle">Discover and take quizzes created by fellow students and tutors</p>
             
             <div class="actions">
                 <a href="quiz-builder.html" class="btn btn-success"><i class="fas fa-plus-circle"></i> Create New Quiz</a>
