@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Quiz Builder</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="CSS/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-pencil-alt"></i> Create Quiz</h1>
+            <p class="subtitle">Create Amazing quizzes and share with  friends and study partners</p>
+        </header>
+        
+        <div class="main-content">
+            <section class="builder-section">
+                <h2 class="section-title"><i class="fas fa-tools"></i> Quiz Builder</h2>
+                
+                <!-- Quiz Info Banner -->
+                <div id="quiz-info-banner" class="quiz-info-banner" style="display: none;">
+                    <div class="info">
+                        <h3 id="banner-quiz-name">Quiz Name</h3>
+                        <p id="banner-course">Course: </p>
+                        <p id="banner-quiz-time">Time: 0 minutes</p>
+                        <p id="banner-quiz-topics" style="display: none;">Topics: </p>
+                    </div>
+                    <div class="actions">
+                        <button class="btn btn-outline" id="edit-quiz-info" style="background: white; color: var(--primary);">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="tab-container">
+                    <div class="tabs">
+                        <div class="tab active" data-tab="quizInfo"><i class="fas fa-info-circle"></i> Quiz Info</div>
+                        <div class="tab" data-tab="heading"><i class="fas fa-heading"></i> Heading</div>
+                        <div class="tab" data-tab="instruction"><i class="fas fa-list-alt"></i> Instruction</div>
+                        <div class="tab" data-tab="question"><i class="fas fa-question-circle"></i> Question</div>
+                        <div class="tab" data-tab="media"><i class="fas fa-image"></i> Media</div>
+                    </div>
+                    
+                    <!-- Quiz Info Tab -->
+                    <div class="tab-content active" id="quizInfo-tab">
+                        <div class="form-group">
+                            <label for="quiz-name">Quiz Name <span class="required">*</span></label>
+                            <input type="text" id="quiz-name" placeholder="e.g., Midterm Examination">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="course">Course <span class="required">*</span></label>
+                            <input type="text" id="course" placeholder="e.g., General Chemistry I">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="time-allowed">Time Allowed (minutes) <span class="required">*</span></label>
+                            <input type="number" id="time-allowed" placeholder="e.g., 90">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Topics (Optional)</label>
+                            <div class="topic-input">
+                                <input type="text" id="topic-input" placeholder="Add a topic">
+                                <button class="btn btn-outline" id="add-topic">Add</button>
+                            </div>
+                            <div class="topics-list" id="topics-list">
+                                <!-- Topics will be added here -->
+                            </div>
+                        </div>
+                        
+                        <button class="btn" id="save-quiz-info"><i class="fas fa-save"></i> Save Quiz Info</button>
+                    </div>
+                    
+                    <!-- Heading Tab -->
+                    <div class="tab-content" id="heading-tab">
+                        <div class="form-group">
+                            <label for="heading-text">Heading Text <span class="required">*</span></label>
+                            <input type="text" id="heading-text" placeholder="Enter section heading">
+                        </div>
+                        <button class="btn" id="add-heading"><i class="fas fa-plus-circle"></i> Add Heading</button>
+                    </div>
+                    
+                    <!-- Instruction Tab -->
+                    <div class="tab-content" id="instruction-tab">
+                        <div class="form-group">
+                            <label for="instruction-text">Instruction Text <span class="required">*</span></label>
+                            <textarea id="instruction-text" placeholder="Enter instructions for this section"></textarea>
+                        </div>
+                        <button class="btn" id="add-instruction"><i class="fas fa-plus-circle"></i> Add Instruction</button>
+                    </div>
+                    
+                    <!-- Question Tab -->
+                    <div class="tab-content" id="question-tab">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="question-name">Question Name <span class="required">*</span></label>
+                                <input type="text" id="question-name" placeholder="e.g., Question 1">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="question-type">Question Type <span class="required">*</span></label>
+                                <select id="question-type">
+                                    <option value="subjective">Subjective</option>
+                                    <option value="multiple-choice">Multiple Choice</option>
+                                    <option value="true-false">True/False</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="question-text">Question <span class="required">*</span></label>
+                            <textarea id="question-text" placeholder="Enter your question"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Question Topics (Optional)</label>
+                            <div class="topic-input">
+                                <input type="text" id="question-topic-input" placeholder="Add a topic for this question">
+                                <button class="btn btn-outline" id="add-question-topic">Add</button>
+                            </div>
+                            <div class="topics-list" id="question-topics-list">
+                                <!-- Question topics will be added here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Options for multiple choice -->
+                        <div class="form-group" id="options-container" style="display: none;">
+                            <label>Options <span class="required">*</span></label>
+                            <div class="options-container" id="options-list">
+                                <!-- Options will be added here -->
+                            </div>
+                            <button class="btn btn-outline" id="add-option"><i class="fas fa-plus"></i> Add Option</button>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="answer-text">Answer <span class="required">*</span></label>
+                            <textarea id="answer-text" placeholder="Provide the expected answer"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="hint-text">Hint (Optional)</label>
+                            <textarea id="hint-text" placeholder="Provide a hint for this question"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="explanation-text">Explanation (Optional)</label>
+                            <div class="explanation-toolbar">
+                                <button class="format-btn" data-format="**Bold**"><strong>B</strong></button>
+                                <button class="format-btn" data-format="_Italic_"><em>I</em></button>
+                                <button class="format-btn" data-format="~~Strikethrough~~"><s>S</s></button>
+                                <button class="format-btn" data-format="++Underline++"><u>U</u></button>
+                                <button class="format-btn" data-format="==Highlight==">Highlight</button>
+                                <button class="format-btn" data-format="##Heading##">Heading</button>
+                                <button class="format-btn" data-format="- List item">List</button>
+                                <button class="format-btn" data-format="1. Numbered item">Numbered</button>
+                            </div>
+                            <textarea id="explanation-text" placeholder="Provide a detailed explanation using markdown formatting"></textarea>
+                            
+                            <div class="explanation-preview" id="explanation-preview">
+                                Explanation preview will appear here
+                            </div>
+                        </div>
+                        
+                        <button class="btn" id="add-question-btn"><i class="fas fa-plus-circle"></i> Add Question</button>
+                    </div>
+                    
+                    <!-- Media Tab -->
+                    <div class="tab-content" id="media-tab">
+                        <div class="form-group">
+                            <label for="media-type">Media Type</label>
+                            <select id="media-type">
+                                <option value="image">Image/Diagram</option>
+                                <option value="youtube">YouTube Video</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" id="image-upload-group">
+                            <label>Upload Image</label>
+                            <div class="file-upload">
+                                <input type="file" id="image-upload" accept="image/*">
+                                <div class="file-upload-label"><i class="fas fa-cloud-upload-alt"></i> Choose an image file</div>
+                            </div>
+                            <img id="image-preview" class="image-preview" alt="Image preview">
+                        </div>
+                        
+                        <div class="form-group" id="youtube-url-group" style="display: none;">
+                            <label for="youtube-url">YouTube URL</label>
+                            <input type="text" id="youtube-url" placeholder="Paste YouTube video URL">
+                        </div>
+                        
+                        <button class="btn" id="add-media"><i class="fas fa-plus-circle"></i> Add Media</button>
+                    </div>
+                </div>
+                
+                <h3 class="section-title"><i class="fas fa-list"></i> Quiz Elements</h3>
+                <div class="element-list" id="element-list">
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No elements added yet. Start by adding Quiz Info!</p>
+                    </div>
+                </div>
+                
+                <div class="actions">
+                    <button class="btn btn-danger" id="clear-all"><i class="fas fa-trash-alt"></i> Clear All</button>
+                    <button class="btn btn-success" id="create-quiz"><i class="fas fa-file-export"></i> Create Quiz JSON</button>
+                </div>
+            </section>
+            
+            <section class="preview-section">
+                <h2 class="section-title"><i class="fas fa-eye"></i> Quiz Preview</h2>
+                <div class="preview-content" id="preview-content">
+                    <div class="empty-state">
+                        <i class="fas fa-file-alt"></i>
+                        <p>Your quiz preview will appear here as you add elements.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+<script src="JS/script.js"></script>
+</body>
+</html>

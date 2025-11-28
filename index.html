@@ -1,45 +1,35 @@
-Modern Quiz Builder with Quiz Name and Course
-
-I've updated the code to use "quiz name" and "course" instead of "quiz title". Here's the complete solution:
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Quiz Builder</title>
+    <title>QuizHub - Browse Quizzes</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary: #4361ee;
             --primary-light: #4895ef;
             --secondary: #3f37c9;
-            --success: #4cc9f0;
+            --success: #2ecc71;
             --danger: #f72585;
             --warning: #f8961e;
             --light: #f8f9fa;
             --dark: #212529;
             --gray: #6c757d;
-            --explainColor: #2d3748;
-            --explainBg: #f7fafc;
-            --strongColor: #2b6cb0;
-            --cAnsBg: #e6fffa;
-            --cAns: #234e52;
-            --border-radius: 12px;
-            --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
+            --border-radius: 16px;
+            --box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
         }
         
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: var(--dark);
             line-height: 1.6;
             min-height: 100vh;
@@ -47,20 +37,22 @@ I've updated the code to use "quiz name" and "course" instead of "quiz title". H
         }
         
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
         }
         
         header {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             color: var(--dark);
-            padding: 2rem;
+            padding: 2.5rem 2rem;
             text-align: center;
             border-radius: var(--border-radius);
             margin-bottom: 2rem;
             box-shadow: var(--box-shadow);
             position: relative;
             overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         header::before {
@@ -69,618 +61,395 @@ I've updated the code to use "quiz name" and "course" instead of "quiz title". H
             top: 0;
             left: 0;
             width: 100%;
-            height: 5px;
+            height: 4px;
             background: linear-gradient(90deg, var(--primary), var(--secondary), var(--success));
         }
         
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            font-size: 2.75rem;
+            margin-bottom: 0.75rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            font-weight: 800;
+            letter-spacing: -0.5px;
         }
         
         .subtitle {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             opacity: 0.8;
             max-width: 600px;
             margin: 0 auto;
+            font-weight: 400;
         }
         
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
-        
-        @media (max-width: 1024px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .builder-section, .preview-section {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            box-shadow: var(--box-shadow);
+        .actions {
             display: flex;
-            flex-direction: column;
-        }
-        
-        .section-title {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--primary-light);
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .section-title i {
-            font-size: 1.3rem;
-        }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--dark);
-        }
-        
-        input, textarea, select {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid #e1e5e9;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            transition: var(--transition);
-            background: #fafbfc;
-        }
-        
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
-            background: white;
-        }
-        
-        textarea {
-            min-height: 100px;
-            resize: vertical;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
         }
         
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            padding: 0.75rem 1.5rem;
-            background-color: var(--primary);
+            gap: 10px;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: white;
             border: none;
-            border-radius: var(--border-radius);
+            border-radius: 50px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
             text-align: center;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
         }
         
         .btn:hover {
-            background-color: var(--secondary);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        }
-        
-        .btn-danger {
-            background-color: var(--danger);
-        }
-        
-        .btn-danger:hover {
-            background-color: #e1156d;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
         }
         
         .btn-success {
-            background-color: #2ecc71;
+            background: linear-gradient(135deg, var(--success), #27ae60);
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
         }
         
         .btn-success:hover {
-            background-color: #27ae60;
+            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.4);
         }
         
-        .btn-warning {
-            background-color: var(--warning);
-        }
-        
-        .btn-warning:hover {
-            background-color: #e68a1a;
-        }
-        
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
-        }
-        
-        .btn-outline:hover {
-            background: var(--primary);
-            color: white;
-        }
-        
-        .btn:disabled {
-            background-color: var(--gray);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        .btn:disabled:hover {
-            background-color: var(--gray);
-            transform: none;
-            box-shadow: none;
-        }
-        
-        .element-list {
-            margin-top: 1.5rem;
-            max-height: 400px;
-            overflow-y: auto;
-            flex: 1;
-        }
-        
-        .element-item {
-            background-color: var(--light);
-            border-radius: var(--border-radius);
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-left: 4px solid var(--primary);
-            transition: var(--transition);
-        }
-        
-        .element-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        .element-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-        
-        .element-type {
-            font-size: 0.8rem;
-            background-color: var(--primary-light);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-weight: 600;
-        }
-        
-        .element-content {
-            margin-bottom: 0.5rem;
-            word-break: break-word;
-        }
-        
-        .element-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-        
-        .element-actions .btn {
-            padding: 0.4rem 0.8rem;
-            font-size: 0.9rem;
-        }
-        
-        .preview-content {
-            flex: 1;
-            padding: 1rem;
-            background-color: var(--light);
-            border-radius: var(--border-radius);
-            overflow-y: auto;
-        }
-        
-        .quiz-element {
+        .quiz-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 2rem;
             margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #e1e5e9;
         }
         
-        .quiz-heading {
-            font-size: 1.5rem;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #e1e5e9;
-        }
-        
-        .quiz-instruction {
-            font-style: italic;
-            color: var(--gray);
-            margin-bottom: 1rem;
-            background: #f8f9fa;
-            padding: 1rem;
+        .quiz-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             border-radius: var(--border-radius);
-            border-left: 4px solid var(--warning);
-        }
-        
-        .quiz-question {
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-        
-        .quiz-explanation {
-            background-color: var(--explainBg);
-            color: var(--explainColor);
-            padding: 1.5rem;
-            border-radius: var(--border-radius);
-            border-left: 4px solid var(--strongColor);
-            margin-top: 1rem;
-            white-space: pre-wrap;
-            line-height: 1.7;
-        }
-        
-        .quiz-explanation strong {
-            color: var(--strongColor);
-            font-weight: 700;
-        }
-        
-        .quiz-explanation em {
-            font-style: italic;
-        }
-        
-        .quiz-explanation del {
-            text-decoration: line-through;
-        }
-        
-        .quiz-explanation u {
-            text-decoration: underline;
-        }
-        
-        .quiz-explanation .highlight {
-            background-color: #fff3cd;
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-        
-        .quiz-image {
-            max-width: 100%;
-            border-radius: var(--border-radius);
-            margin: 1rem 0;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        .quiz-video {
-            width: 100%;
-            aspect-ratio: 16/9;
-            border-radius: var(--border-radius);
-            margin: 1rem 0;
-        }
-        
-        .tab-container {
-            margin-bottom: 1.5rem;
-        }
-        
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid #e1e5e9;
-            flex-wrap: wrap;
-            gap: 5px;
-        }
-        
-        .tab {
-            padding: 0.75rem 1.5rem;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
             transition: var(--transition);
             display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 500;
+            flex-direction: column;
+            height: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
         }
         
-        .tab.active {
-            border-bottom: 3px solid var(--primary);
-            color: var(--primary);
-            font-weight: 600;
+        .quiz-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            transform: scaleX(0);
+            transition: var(--transition);
         }
         
-        .tab-content {
-            display: none;
-            padding: 1.5rem 0;
+        .quiz-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
         
-        .tab-content.active {
-            display: block;
+        .quiz-card:hover::before {
+            transform: scaleX(1);
         }
         
-        .actions {
+        .quiz-header {
             display: flex;
             justify-content: space-between;
-            margin-top: 2rem;
-            gap: 1rem;
+            align-items: flex-start;
+            margin-bottom: 1.25rem;
         }
         
-        .actions .btn {
-            flex: 1;
-        }
-        
-        .file-upload {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-        }
-        
-        .file-upload input[type="file"] {
-            position: absolute;
-            left: 0;
-            top: 0;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-        }
-        
-        .file-upload-label {
-            display: block;
-            padding: 0.75rem;
-            background-color: var(--light);
-            border: 2px dashed var(--gray);
-            border-radius: var(--border-radius);
-            text-align: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .file-upload-label:hover {
-            background-color: #e9ecef;
-            border-color: var(--primary);
-        }
-        
-        .image-preview {
-            max-width: 100%;
-            max-height: 200px;
-            margin-top: 1rem;
-            border-radius: var(--border-radius);
-            display: none;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        .hint-box {
-            background-color: #fff3cd;
-            border-left: 4px solid var(--warning);
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 6px;
-        }
-        
-        .topic-input {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        
-        .topic-input input {
-            flex: 1;
-        }
-        
-        .topics-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
-        }
-        
-        .topic-tag {
-            background-color: var(--primary-light);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-weight: 500;
-        }
-        
-        .topic-tag .remove {
-            cursor: pointer;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        .form-row {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .form-row .form-group {
-            flex: 1;
-        }
-        
-        .explanation-toolbar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-bottom: 10px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: var(--border-radius);
-        }
-        
-        .format-btn {
-            background: white;
-            border: 1px solid #e1e5e9;
-            border-radius: 4px;
-            padding: 5px 10px;
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 0.9rem;
-        }
-        
-        .format-btn:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-        
-        .explanation-preview {
-            background-color: var(--explainBg);
-            padding: 15px;
-            border-radius: var(--border-radius);
-            margin-top: 15px;
-            border: 1px dashed #ccc;
-            min-height: 100px;
-            white-space: pre-wrap;
-            line-height: 1.7;
-        }
-        
-        .explanation-preview strong {
-            color: var(--strongColor);
+        .quiz-title {
+            font-size: 1.4rem;
             font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            line-height: 1.3;
         }
         
-        .explanation-preview em {
+        .quiz-course {
+            font-size: 0.85rem;
+            color: white;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            display: inline-block;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(67, 97, 238, 0.2);
+        }
+        
+        .quiz-author {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+        
+        .quiz-author i {
+            color: var(--primary);
+            background: rgba(67, 97, 238, 0.1);
+            padding: 0.5rem;
+            border-radius: 50%;
+        }
+        
+        .quiz-preview {
+            flex-grow: 1;
+            margin-bottom: 2rem;
+        }
+        
+        .preview-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--gray);
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .first-question {
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 1.25rem;
+            background: rgba(67, 97, 238, 0.05);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
             font-style: italic;
         }
         
-        .explanation-preview del {
-            text-decoration: line-through;
-        }
-        
-        .explanation-preview u {
-            text-decoration: underline;
-        }
-        
-        .explanation-preview .highlight {
-            background-color: #fff3cd;
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-        
-        .options-container {
-            margin-top: 15px;
-        }
-        
-        .option-item {
+        .quiz-footer {
             display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
+            justify-content: space-between;
             align-items: center;
+            margin-top: auto;
         }
         
-        .option-item input[type="text"] {
-            flex: 1;
-        }
-        
-        .option-item .remove-option {
-            color: var(--danger);
-            cursor: pointer;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            transition: var(--transition);
-        }
-        
-        .option-item .remove-option:hover {
-            background: rgba(247, 37, 133, 0.1);
+        .quiz-id {
+            font-size: 0.8rem;
+            color: var(--gray);
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
         }
         
         .empty-state {
             text-align: center;
-            padding: 2rem;
+            padding: 4rem 2rem;
             color: var(--gray);
+            grid-column: 1 / -1;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: var(--border-radius);
+            backdrop-filter: blur(10px);
         }
         
         .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
             opacity: 0.5;
         }
         
-        .quiz-info-banner {
-            background: linear-gradient(135deg, var(--primary-light), var(--primary));
-            color: white;
-            padding: 1rem;
+        .search-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 1rem;
             margin-bottom: 1.5rem;
+        }
+        
+        .search-box input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: 2px solid rgba(67, 97, 238, 0.1);
+            border-radius: 50px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: rgba(255, 255, 255, 0.8);
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+            background: white;
+        }
+        
+        .search-filters {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .filter-label {
+            font-weight: 700;
+            color: var(--dark);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .filter-label i {
+            color: var(--primary);
+        }
+        
+        .filter-options {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-option {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .filter-option input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .filter-label-text {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: 2px solid rgba(67, 97, 238, 0.2);
+            border-radius: 50px;
+            transition: var(--transition);
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.8);
+        }
+        
+        .filter-option input:checked + .filter-label-text {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .filter-option:hover .filter-label-text {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .stats {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 2rem;
+            color: white;
+            font-size: 0.95rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
-        .quiz-info-banner .info {
-            flex: 1;
+        .sort-select {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(67, 97, 238, 0.2);
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            color: var(--dark);
+            cursor: pointer;
+            transition: var(--transition);
         }
         
-        .quiz-info-banner .actions {
-            margin-top: 0;
+        .sort-select:focus {
+            outline: none;
+            border-color: var(--primary);
         }
         
         @media (max-width: 768px) {
-            .main-content {
-                gap: 1rem;
-            }
-            
-            .builder-section, .preview-section {
-                padding: 1rem;
-            }
-            
-            .form-row {
-                flex-direction: column;
-                gap: 0;
-            }
-            
-            .tabs {
-                overflow-x: auto;
-            }
-            
-            .tab {
-                padding: 0.75rem 1rem;
+            .quiz-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
             }
             
             .actions {
                 flex-direction: column;
+                align-items: center;
             }
             
-            .quiz-info-banner {
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .search-box {
+                flex-direction: column;
+            }
+            
+            .filter-options {
+                justify-content: center;
+            }
+            
+            .stats {
                 flex-direction: column;
                 gap: 1rem;
                 text-align: center;
+                border-radius: var(--border-radius);
+            }
+            
+            h1 {
+                font-size: 2.25rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
             }
         }
         
         @media (max-width: 480px) {
             header {
-                padding: 1.5rem 1rem;
+                padding: 2rem 1.5rem;
             }
             
             h1 {
                 font-size: 2rem;
             }
             
-            .section-title {
-                font-size: 1.3rem;
+            .quiz-card {
+                padding: 1.5rem;
+            }
+            
+            .search-container {
+                padding: 1.5rem;
+            }
+            
+            .filter-label-text {
+                padding: 0.6rem 1.25rem;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -688,985 +457,288 @@ I've updated the code to use "quiz name" and "course" instead of "quiz title". H
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-pencil-alt"></i> Modern Quiz Builder</h1>
-            <p class="subtitle">Create beautiful quizzes with markdown formatting and multiple question types</p>
+            <h1><i class="fas fa-graduation-cap"></i> QuizHub</h1>
+            <p class="subtitle">Discover and take quizzes created by educators worldwide</p>
+            
+            <div class="actions">
+                <a href="quiz-builder.html" class="btn btn-success"><i class="fas fa-plus-circle"></i> Create New Quiz</a>
+            </div>
         </header>
         
-        <div class="main-content">
-            <section class="builder-section">
-                <h2 class="section-title"><i class="fas fa-tools"></i> Quiz Builder</h2>
-                
-                <!-- Quiz Info Banner -->
-                <div id="quiz-info-banner" class="quiz-info-banner" style="display: none;">
-                    <div class="info">
-                        <h3 id="banner-quiz-name">Quiz Name</h3>
-                        <p id="banner-course">Course: </p>
-                        <p id="banner-quiz-time">Time: 0 minutes</p>
-                        <p id="banner-quiz-topics" style="display: none;">Topics: </p>
-                    </div>
-                    <div class="actions">
-                        <button class="btn btn-outline" id="edit-quiz-info" style="background: white; color: var(--primary);">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="tab-container">
-                    <div class="tabs">
-                        <div class="tab active" data-tab="quizInfo"><i class="fas fa-info-circle"></i> Quiz Info</div>
-                        <div class="tab" data-tab="heading"><i class="fas fa-heading"></i> Heading</div>
-                        <div class="tab" data-tab="instruction"><i class="fas fa-list-alt"></i> Instruction</div>
-                        <div class="tab" data-tab="question"><i class="fas fa-question-circle"></i> Question</div>
-                        <div class="tab" data-tab="media"><i class="fas fa-image"></i> Media</div>
-                    </div>
-                    
-                    <!-- Quiz Info Tab -->
-                    <div class="tab-content active" id="quizInfo-tab">
-                        <div class="form-group">
-                            <label for="quiz-name">Quiz Name <span class="required">*</span></label>
-                            <input type="text" id="quiz-name" placeholder="e.g., Midterm Examination">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="course">Course <span class="required">*</span></label>
-                            <input type="text" id="course" placeholder="e.g., General Chemistry I">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="time-allowed">Time Allowed (minutes) <span class="required">*</span></label>
-                            <input type="number" id="time-allowed" placeholder="e.g., 90">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Topics (Optional)</label>
-                            <div class="topic-input">
-                                <input type="text" id="topic-input" placeholder="Add a topic">
-                                <button class="btn btn-outline" id="add-topic">Add</button>
-                            </div>
-                            <div class="topics-list" id="topics-list">
-                                <!-- Topics will be added here -->
-                            </div>
-                        </div>
-                        
-                        <button class="btn" id="save-quiz-info"><i class="fas fa-save"></i> Save Quiz Info</button>
-                    </div>
-                    
-                    <!-- Heading Tab -->
-                    <div class="tab-content" id="heading-tab">
-                        <div class="form-group">
-                            <label for="heading-text">Heading Text <span class="required">*</span></label>
-                            <input type="text" id="heading-text" placeholder="Enter section heading">
-                        </div>
-                        <button class="btn" id="add-heading"><i class="fas fa-plus-circle"></i> Add Heading</button>
-                    </div>
-                    
-                    <!-- Instruction Tab -->
-                    <div class="tab-content" id="instruction-tab">
-                        <div class="form-group">
-                            <label for="instruction-text">Instruction Text <span class="required">*</span></label>
-                            <textarea id="instruction-text" placeholder="Enter instructions for this section"></textarea>
-                        </div>
-                        <button class="btn" id="add-instruction"><i class="fas fa-plus-circle"></i> Add Instruction</button>
-                    </div>
-                    
-                    <!-- Question Tab -->
-                    <div class="tab-content" id="question-tab">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="question-name">Question Name <span class="required">*</span></label>
-                                <input type="text" id="question-name" placeholder="e.g., Question 1">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="question-type">Question Type <span class="required">*</span></label>
-                                <select id="question-type">
-                                    <option value="subjective">Subjective</option>
-                                    <option value="multiple-choice">Multiple Choice</option>
-                                    <option value="true-false">True/False</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="question-text">Question <span class="required">*</span></label>
-                            <textarea id="question-text" placeholder="Enter your question"></textarea>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Question Topics (Optional)</label>
-                            <div class="topic-input">
-                                <input type="text" id="question-topic-input" placeholder="Add a topic for this question">
-                                <button class="btn btn-outline" id="add-question-topic">Add</button>
-                            </div>
-                            <div class="topics-list" id="question-topics-list">
-                                <!-- Question topics will be added here -->
-                            </div>
-                        </div>
-                        
-                        <!-- Options for multiple choice -->
-                        <div class="form-group" id="options-container" style="display: none;">
-                            <label>Options <span class="required">*</span></label>
-                            <div class="options-container" id="options-list">
-                                <!-- Options will be added here -->
-                            </div>
-                            <button class="btn btn-outline" id="add-option"><i class="fas fa-plus"></i> Add Option</button>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="answer-text">Answer <span class="required">*</span></label>
-                            <textarea id="answer-text" placeholder="Provide the expected answer"></textarea>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="hint-text">Hint (Optional)</label>
-                            <textarea id="hint-text" placeholder="Provide a hint for this question"></textarea>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="explanation-text">Explanation (Optional)</label>
-                            <div class="explanation-toolbar">
-                                <button class="format-btn" data-format="**Bold**"><strong>B</strong></button>
-                                <button class="format-btn" data-format="_Italic_"><em>I</em></button>
-                                <button class="format-btn" data-format="~~Strikethrough~~"><s>S</s></button>
-                                <button class="format-btn" data-format="++Underline++"><u>U</u></button>
-                                <button class="format-btn" data-format="==Highlight==">Highlight</button>
-                                <button class="format-btn" data-format="##Heading##">Heading</button>
-                                <button class="format-btn" data-format="- List item">List</button>
-                                <button class="format-btn" data-format="1. Numbered item">Numbered</button>
-                            </div>
-                            <textarea id="explanation-text" placeholder="Provide a detailed explanation using markdown formatting"></textarea>
-                            
-                            <div class="explanation-preview" id="explanation-preview">
-                                Explanation preview will appear here
-                            </div>
-                        </div>
-                        
-                        <button class="btn" id="add-question-btn"><i class="fas fa-plus-circle"></i> Add Question</button>
-                    </div>
-                    
-                    <!-- Media Tab -->
-                    <div class="tab-content" id="media-tab">
-                        <div class="form-group">
-                            <label for="media-type">Media Type</label>
-                            <select id="media-type">
-                                <option value="image">Image/Diagram</option>
-                                <option value="youtube">YouTube Video</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group" id="image-upload-group">
-                            <label>Upload Image</label>
-                            <div class="file-upload">
-                                <input type="file" id="image-upload" accept="image/*">
-                                <div class="file-upload-label"><i class="fas fa-cloud-upload-alt"></i> Choose an image file</div>
-                            </div>
-                            <img id="image-preview" class="image-preview" alt="Image preview">
-                        </div>
-                        
-                        <div class="form-group" id="youtube-url-group" style="display: none;">
-                            <label for="youtube-url">YouTube URL</label>
-                            <input type="text" id="youtube-url" placeholder="Paste YouTube video URL">
-                        </div>
-                        
-                        <button class="btn" id="add-media"><i class="fas fa-plus-circle"></i> Add Media</button>
-                    </div>
-                </div>
-                
-                <h3 class="section-title"><i class="fas fa-list"></i> Quiz Elements</h3>
-                <div class="element-list" id="element-list">
-                    <div class="empty-state">
-                        <i class="fas fa-inbox"></i>
-                        <p>No elements added yet. Start by adding Quiz Info!</p>
-                    </div>
-                </div>
-                
-                <div class="actions">
-                    <button class="btn btn-danger" id="clear-all"><i class="fas fa-trash-alt"></i> Clear All</button>
-                    <button class="btn btn-success" id="create-quiz"><i class="fas fa-file-export"></i> Create Quiz JSON</button>
-                </div>
-            </section>
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="What are you looking for?">
+                <button class="btn" id="search-btn"><i class="fas fa-search"></i> Search</button>
+            </div>
             
-            <section class="preview-section">
-                <h2 class="section-title"><i class="fas fa-eye"></i> Quiz Preview</h2>
-                <div class="preview-content" id="preview-content">
-                    <div class="empty-state">
-                        <i class="fas fa-file-alt"></i>
-                        <p>Your quiz preview will appear here as you add elements.</p>
-                    </div>
+            <div class="search-filters">
+                <div class="filter-label">
+                    <i class="fas fa-filter"></i>
+                    Search by:
                 </div>
-            </section>
+                <div class="filter-options">
+                    <label class="filter-option">
+                        <input type="radio" name="search-filter" value="all" checked>
+                        <span class="filter-label-text">
+                            <i class="fas fa-layer-group"></i>All Fields
+                        </span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="search-filter" value="author">
+                        <span class="filter-label-text">
+                            <i class="fas fa-user"></i>Author
+                        </span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="search-filter" value="name">
+                        <span class="filter-label-text">
+                            <i class="fas fa-heading"></i>Quiz Name
+                        </span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="search-filter" value="course">
+                        <span class="filter-label-text">
+                            <i class="fas fa-book"></i>Course
+                        </span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="search-filter" value="question">
+                        <span class="filter-label-text">
+                            <i class="fas fa-question"></i>First Question
+                        </span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <span id="quiz-count">Showing 6 quizzes</span>
+            <span>Sorted by: 
+                <select class="sort-select" id="sort-select">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="name">Name (A-Z)</option>
+                    <option value="course">Course</option>
+                </select>
+            </span>
+        </div>
+        
+        <div class="quiz-grid" id="quiz-grid">
+            <!-- Quiz cards will be dynamically inserted here -->
         </div>
     </div>
 
     <script>
-        // Quiz elements array to store all elements
-        let quizElements = [];
-        let quizInfo = null;
-        let quizInfoTopics = [];
-        let questionTopics = [];
-        let questionOptions = [];
-        
+        // Sample quiz data
+        const quizzes = [
+            {
+                quizname: "My Group Quiz",
+                course: "Chemistry",
+                author: "Prof John",
+                id: "r2746476gd",
+                first_question: "What is the atomic number of Carbon?",
+                date: "2023-10-15"
+            },
+            {
+                quizname: "Physics Fundamentals",
+                course: "Physics",
+                author: "Dr. Smith",
+                id: "p8364920hd",
+                first_question: "What is Newton's First Law of Motion?",
+                date: "2023-09-22"
+            },
+            {
+                quizname: "Cell Biology Quiz",
+                course: "Biology",
+                author: "Prof. Johnson",
+                id: "b5283746ks",
+                first_question: "What is the function of mitochondria?",
+                date: "2023-11-05"
+            },
+            {
+                quizname: "Algebra Test",
+                course: "Mathematics",
+                author: "Dr. Williams",
+                id: "m9274635ls",
+                first_question: "Solve for x: 2x + 5 = 15",
+                date: "2023-08-30"
+            },
+            {
+                quizname: "Organic Chemistry",
+                course: "Chemistry",
+                author: "Prof. Davis",
+                id: "c6382917md",
+                first_question: "What is the molecular formula of benzene?",
+                date: "2023-10-28"
+            },
+            {
+                quizname: "Thermodynamics",
+                course: "Physics",
+                author: "Dr. Anderson",
+                id: "p4728193nd",
+                first_question: "Define the First Law of Thermodynamics",
+                date: "2023-09-10"
+            }
+        ];
+
         // DOM elements
-        const tabs = document.querySelectorAll('.tab');
-        const tabContents = document.querySelectorAll('.tab-content');
-        const elementList = document.getElementById('element-list');
-        const previewContent = document.getElementById('preview-content');
-        const questionTypeSelect = document.getElementById('question-type');
-        const optionsContainer = document.getElementById('options-container');
-        const optionsList = document.getElementById('options-list');
-        const mediaTypeSelect = document.getElementById('media-type');
-        const imageUploadGroup = document.getElementById('image-upload-group');
-        const youtubeUrlGroup = document.getElementById('youtube-url-group');
-        const imagePreview = document.getElementById('image-preview');
-        const imageUpload = document.getElementById('image-upload');
-        const explanationText = document.getElementById('explanation-text');
-        const explanationPreview = document.getElementById('explanation-preview');
-        const topicsList = document.getElementById('topics-list');
-        const questionTopicsList = document.getElementById('question-topics-list');
-        const formatButtons = document.querySelectorAll('.format-btn');
-        const quizInfoBanner = document.getElementById('quiz-info-banner');
-        const bannerQuizName = document.getElementById('banner-quiz-name');
-        const bannerCourse = document.getElementById('banner-course');
-        const bannerQuizTime = document.getElementById('banner-quiz-time');
-        const bannerQuizTopics = document.getElementById('banner-quiz-topics');
-        const saveQuizInfoBtn = document.getElementById('save-quiz-info');
-        const editQuizInfoBtn = document.getElementById('edit-quiz-info');
-        
-        // Tab switching functionality
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                const tabId = tab.getAttribute('data-tab');
-                
-                // Update active tab
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                
-                // Update active tab content
-                tabContents.forEach(content => {
-                    content.classList.remove('active');
-                    if (content.id === `${tabId}-tab`) {
-                        content.classList.add('active');
-                    }
-                });
-            });
-        });
-        
-        // Question type change handler
-        questionTypeSelect.addEventListener('change', function() {
-            const questionType = this.value;
+        const quizGrid = document.getElementById('quiz-grid');
+        const searchInput = document.getElementById('search-input');
+        const searchBtn = document.getElementById('search-btn');
+        const sortSelect = document.getElementById('sort-select');
+        const quizCount = document.getElementById('quiz-count');
+        const filterRadios = document.querySelectorAll('input[name="search-filter"]');
+
+        // Current search filter
+        let currentFilter = 'all';
+
+        // Display quizzes
+        function displayQuizzes(quizzesToDisplay) {
+            quizGrid.innerHTML = '';
             
-            if (questionType === 'multiple-choice') {
-                optionsContainer.style.display = 'block';
-                // Initialize with two empty options
-                if (questionOptions.length === 0) {
-                    addOption();
-                    addOption();
-                }
-            } else if (questionType === 'true-false') {
-                optionsContainer.style.display = 'none';
-                // Auto-set options for true/false
-                questionOptions = ['True', 'False'];
-                updateOptionsList();
-            } else {
-                optionsContainer.style.display = 'none';
-                questionOptions = [];
-            }
-        });
-        
-        // Add option for multiple choice
-        document.getElementById('add-option').addEventListener('click', addOption);
-        
-        function addOption() {
-            questionOptions.push('');
-            updateOptionsList();
-        }
-        
-        function removeOption(index) {
-            questionOptions.splice(index, 1);
-            updateOptionsList();
-        }
-        
-        function updateOptionValue(index, value) {
-            questionOptions[index] = value;
-        }
-        
-        function updateOptionsList() {
-            optionsList.innerHTML = '';
-            questionOptions.forEach((option, index) => {
-                const optionItem = document.createElement('div');
-                optionItem.className = 'option-item';
-                optionItem.innerHTML = `
-                    <input type="text" value="${option}" placeholder="Option ${index + 1}" onchange="updateOptionValue(${index}, this.value)">
-                    <div class="remove-option" onclick="removeOption(${index})">
-                        <i class="fas fa-times"></i>
-                    </div>
-                `;
-                optionsList.appendChild(optionItem);
-            });
-        }
-        
-        // Media type selection
-        mediaTypeSelect.addEventListener('change', function() {
-            const mediaType = this.value;
-            
-            // Hide all media input groups
-            imageUploadGroup.style.display = 'none';
-            youtubeUrlGroup.style.display = 'none';
-            
-            // Show the relevant group
-            if (mediaType === 'image') {
-                imageUploadGroup.style.display = 'block';
-            } else if (mediaType === 'youtube') {
-                youtubeUrlGroup.style.display = 'block';
-            }
-        });
-        
-        // Image preview
-        imageUpload.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-        
-        // Format buttons for explanation
-        formatButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const format = this.getAttribute('data-format');
-                const textarea = document.getElementById('explanation-text');
-                const start = textarea.selectionStart;
-                const end = textarea.selectionEnd;
-                const selectedText = textarea.value.substring(start, end);
-                
-                let formattedText = '';
-                
-                if (format === '##Heading##') {
-                    formattedText = `## ${selectedText || 'Heading'} ##\n`;
-                } else if (format === '- List item') {
-                    formattedText = `- ${selectedText || 'List item'}\n`;
-                } else if (format === '1. Numbered item') {
-                    formattedText = `1. ${selectedText || 'Numbered item'}\n`;
-                } else {
-                    // For other formats, wrap the selected text
-                    const formatSymbols = format.replace(selectedText || 'text', '').split(' ')[0];
-                    const openSymbol = formatSymbols.substring(0, formatSymbols.length/2);
-                    const closeSymbol = formatSymbols.substring(formatSymbols.length/2);
-                    
-                    formattedText = openSymbol + (selectedText || 'text') + closeSymbol + ' ';
-                }
-                
-                textarea.value = textarea.value.substring(0, start) + formattedText + textarea.value.substring(end);
-                textarea.focus();
-                updateExplanationPreview();
-            });
-        });
-        
-        // Explanation preview
-        explanationText.addEventListener('input', updateExplanationPreview);
-        
-        function updateExplanationPreview() {
-            let text = explanationText.value;
-            if (!text) {
-                explanationPreview.innerHTML = 'Explanation preview will appear here';
-                return;
-            }
-            
-            // Convert markdown-like syntax to HTML
-            text = text
-                .replace(/##(.*?)##/g, '<strong style="font-size:1.2em;color:var(--strongColor)">$1</strong>')
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                .replace(/_(.*?)_/g, '<em>$1</em>')
-                .replace(/~~(.*?)~~/g, '<del>$1</del>')
-                .replace(/\+\+(.*?)\+\+/g, '<u>$1</u>')
-                .replace(/==(.*?)==/g, '<span class="highlight">$1</span>')
-                .replace(/^- (.*$)/gim, '<li>$1</li>')
-                .replace(/^1\. (.*$)/gim, '<li>$1</li>')
-                .replace(/(<li>.*<\/li>)/g, '<ul>$1</ul>');
-            
-            explanationPreview.innerHTML = text;
-        }
-        
-        // Add topic to quiz info
-        document.getElementById('add-topic').addEventListener('click', function() {
-            const topicInput = document.getElementById('topic-input');
-            const topic = topicInput.value.trim();
-            
-            if (topic && !quizInfoTopics.includes(topic)) {
-                quizInfoTopics.push(topic);
-                updateQuizInfoTopicsList();
-                topicInput.value = '';
-            }
-        });
-        
-        // Add topic to question
-        document.getElementById('add-question-topic').addEventListener('click', function() {
-            const topicInput = document.getElementById('question-topic-input');
-            const topic = topicInput.value.trim();
-            
-            if (topic && !questionTopics.includes(topic)) {
-                questionTopics.push(topic);
-                updateQuestionTopicsList();
-                topicInput.value = '';
-            }
-        });
-        
-        // Update quiz info topics list
-        function updateQuizInfoTopicsList() {
-            topicsList.innerHTML = '';
-            quizInfoTopics.forEach(topic => {
-                const topicTag = document.createElement('div');
-                topicTag.className = 'topic-tag';
-                topicTag.innerHTML = `
-                    ${topic}
-                    <span class="remove" data-topic="${topic}"><i class="fas fa-times"></i></span>
-                `;
-                topicsList.appendChild(topicTag);
-            });
-            
-            // Add event listeners to remove buttons
-            document.querySelectorAll('#topics-list .remove').forEach(button => {
-                button.addEventListener('click', function() {
-                    const topic = this.getAttribute('data-topic');
-                    quizInfoTopics = quizInfoTopics.filter(t => t !== topic);
-                    updateQuizInfoTopicsList();
-                });
-            });
-        }
-        
-        // Update question topics list
-        function updateQuestionTopicsList() {
-            questionTopicsList.innerHTML = '';
-            questionTopics.forEach(topic => {
-                const topicTag = document.createElement('div');
-                topicTag.className = 'topic-tag';
-                topicTag.innerHTML = `
-                    ${topic}
-                    <span class="remove" data-topic="${topic}"><i class="fas fa-times"></i></span>
-                `;
-                questionTopicsList.appendChild(topicTag);
-            });
-            
-            // Add event listeners to remove buttons
-            document.querySelectorAll('#question-topics-list .remove').forEach(button => {
-                button.addEventListener('click', function() {
-                    const topic = this.getAttribute('data-topic');
-                    questionTopics = questionTopics.filter(t => t !== topic);
-                    updateQuestionTopicsList();
-                });
-            });
-        }
-        
-        // Save quiz info
-        saveQuizInfoBtn.addEventListener('click', function() {
-            const quizName = document.getElementById('quiz-name').value.trim();
-            const course = document.getElementById('course').value.trim();
-            const timeAllowed = document.getElementById('time-allowed').value.trim();
-            
-            if (quizName && course && timeAllowed) {
-                quizInfo = {
-                    type: "quizInfo",
-                    kind: "pureOBJ",
-                    quiz_name: quizName,
-                    course: course,
-                    topics: [...quizInfoTopics],
-                    time: timeAllowed
-                };
-                
-                // Update banner
-                updateQuizInfoBanner();
-                
-                // Update elements list
-                updateElementList();
-                
-                // Update preview
-                updatePreview();
-                
-                // Show success message
-                alert('Quiz info saved successfully!');
-            } else {
-                alert('Please fill in all required fields for quiz info');
-            }
-        });
-        
-        // Edit quiz info
-        editQuizInfoBtn.addEventListener('click', function() {
-            if (quizInfo) {
-                document.getElementById('quiz-name').value = quizInfo.quiz_name;
-                document.getElementById('course').value = quizInfo.course;
-                document.getElementById('time-allowed').value = quizInfo.time;
-                quizInfoTopics = [...quizInfo.topics];
-                updateQuizInfoTopicsList();
-                
-                // Switch to quiz info tab
-                tabs.forEach(t => t.classList.remove('active'));
-                document.querySelector('[data-tab="quizInfo"]').classList.add('active');
-                tabContents.forEach(content => content.classList.remove('active'));
-                document.getElementById('quizInfo-tab').classList.add('active');
-            }
-        });
-        
-        // Update quiz info banner
-        function updateQuizInfoBanner() {
-            if (quizInfo) {
-                quizInfoBanner.style.display = 'flex';
-                bannerQuizName.textContent = quizInfo.quiz_name;
-                bannerCourse.textContent = `Course: ${quizInfo.course}`;
-                bannerQuizTime.textContent = `Time: ${quizInfo.time} minutes`;
-                
-                if (quizInfo.topics.length > 0) {
-                    bannerQuizTopics.textContent = `Topics: ${quizInfo.topics.join(', ')}`;
-                    bannerQuizTopics.style.display = 'block';
-                } else {
-                    bannerQuizTopics.style.display = 'none';
-                }
-            } else {
-                quizInfoBanner.style.display = 'none';
-            }
-        }
-        
-        // Add heading element
-        document.getElementById('add-heading').addEventListener('click', function() {
-            const headingText = document.getElementById('heading-text').value.trim();
-            
-            if (headingText) {
-                const element = {
-                    type: "heading",
-                    content: headingText
-                };
-                
-                addElement(element);
-                document.getElementById('heading-text').value = '';
-            } else {
-                alert('Please enter a heading text');
-            }
-        });
-        
-        // Add instruction element
-        document.getElementById('add-instruction').addEventListener('click', function() {
-            const instructionText = document.getElementById('instruction-text').value.trim();
-            
-            if (instructionText) {
-                const element = {
-                    type: "Instruction",
-                    content: [instructionText]
-                };
-                
-                addElement(element);
-                document.getElementById('instruction-text').value = '';
-            } else {
-                alert('Please enter instruction text');
-            }
-        });
-        
-        // Add question element
-        document.getElementById('add-question-btn').addEventListener('click', function() {
-            const questionName = document.getElementById('question-name').value.trim();
-            const questionText = document.getElementById('question-text').value.trim();
-            const answerText = document.getElementById('answer-text').value.trim();
-            const explanationText = document.getElementById('explanation-text').value.trim();
-            const hintText = document.getElementById('hint-text').value.trim();
-            const questionType = document.getElementById('question-type').value;
-            
-            if (questionName && questionText && answerText) {
-                // Validate multiple choice answer
-                if (questionType === 'multiple-choice' && !questionOptions.includes(answerText)) {
-                    alert('For multiple choice questions, the answer must be one of the options');
-                    return;
-                }
-                
-                const element = {
-                    type: "Question",
-                    name: questionName,
-                    topic: [...questionTopics],
-                    Question: {
-                        content: questionText,
-                        type: questionType
-                    },
-                    Answer: {
-                        type: "string",
-                        content: answerText
-                    }
-                };
-                
-                // Add options for multiple choice
-                if (questionType === 'multiple-choice') {
-                    element.Question.options = [...questionOptions];
-                } else if (questionType === 'true-false') {
-                    element.Question.options = ['True', 'False'];
-                }
-                
-                // Add explanation if provided
-                if (explanationText) {
-                    element.Explanation = {
-                        type: "string",
-                        content: explanationText
-                    };
-                }
-                
-                // Add hint if provided
-                if (hintText) {
-                    element.Hint = {
-                        type: "string",
-                        content: hintText
-                    };
-                }
-                
-                addElement(element);
-                
-                // Reset form
-                document.getElementById('question-name').value = '';
-                document.getElementById('question-text').value = '';
-                document.getElementById('answer-text').value = '';
-                document.getElementById('explanation-text').value = '';
-                document.getElementById('hint-text').value = '';
-                questionTopics = [];
-                questionOptions = [];
-                updateQuestionTopicsList();
-                updateOptionsList();
-                explanationPreview.innerHTML = 'Explanation preview will appear here';
-                optionsContainer.style.display = 'none';
-            } else {
-                alert('Please fill in all required fields for the question');
-            }
-        });
-        
-        // Add media element
-        document.getElementById('add-media').addEventListener('click', function() {
-            const mediaType = document.getElementById('media-type').value;
-            
-            let element = {
-                type: "img",
-                content: ""
-            };
-            
-            if (mediaType === 'image') {
-                const fileInput = document.getElementById('image-upload');
-                if (fileInput.files.length > 0) {
-                    const file = fileInput.files[0];
-                    const reader = new FileReader();
-                    
-                    reader.onload = function(e) {
-                        element.content = e.target.result;
-                        addElement(element);
-                        resetMediaForm();
-                    };
-                    
-                    reader.readAsDataURL(file);
-                } else {
-                    alert('Please select an image file');
-                }
-            } else if (mediaType === 'youtube') {
-                const youtubeUrl = document.getElementById('youtube-url').value.trim();
-                if (youtubeUrl) {
-                    element.content = youtubeUrl;
-                    addElement(element);
-                    resetMediaForm();
-                } else {
-                    alert('Please enter a YouTube URL');
-                }
-            }
-        });
-        
-        // Reset media form
-        function resetMediaForm() {
-            document.getElementById('image-upload').value = '';
-            document.getElementById('youtube-url').value = '';
-            imagePreview.style.display = 'none';
-        }
-        
-        // Add element to quiz
-        function addElement(element) {
-            // Add ID and timestamp
-            element.id = Date.now();
-            element.timestamp = new Date().toISOString();
-            
-            // Add to array (except quizInfo which is handled separately)
-            if (element.type !== 'quizInfo') {
-                quizElements.push(element);
-            }
-            
-            // Update UI
-            updateElementList();
-            updatePreview();
-        }
-        
-        // Remove element from quiz
-        function removeElement(id) {
-            quizElements = quizElements.filter(element => element.id !== id);
-            updateElementList();
-            updatePreview();
-        }
-        
-        // Move element up in the list
-        function moveElementUp(id) {
-            const index = quizElements.findIndex(element => element.id === id);
-            if (index > 0) {
-                // Swap with previous element
-                [quizElements[index-1], quizElements[index]] = [quizElements[index], quizElements[index-1]];
-                updateElementList();
-                updatePreview();
-            }
-        }
-        
-        // Move element down in the list
-        function moveElementDown(id) {
-            const index = quizElements.findIndex(element => element.id === id);
-            if (index < quizElements.length - 1) {
-                // Swap with next element
-                [quizElements[index], quizElements[index+1]] = [quizElements[index+1], quizElements[index]];
-                updateElementList();
-                updatePreview();
-            }
-        }
-        
-        // Update element list in UI
-        function updateElementList() {
-            elementList.innerHTML = '';
-            
-            if (!quizInfo && quizElements.length === 0) {
-                elementList.innerHTML = `
+            if (quizzesToDisplay.length === 0) {
+                quizGrid.innerHTML = `
                     <div class="empty-state">
-                        <i class="fas fa-inbox"></i>
-                        <p>No elements added yet. Start by adding Quiz Info!</p>
+                        <i class="fas fa-search"></i>
+                        <h3>No quizzes found</h3>
+                        <p>Try adjusting your search criteria or try a different filter</p>
                     </div>
                 `;
                 return;
             }
             
-            // Show quiz info first if it exists
-            if (quizInfo) {
-                const quizInfoItem = document.createElement('div');
-                quizInfoItem.className = 'element-item';
-                quizInfoItem.innerHTML = `
-                    <div class="element-header">
-                        <span class="element-type">Quiz Info</span>
-                        <div class="element-actions">
-                            <button class="btn btn-outline" onclick="editQuizInfo()"><i class="fas fa-edit"></i></button>
+            quizzesToDisplay.forEach(quiz => {
+                const quizCard = document.createElement('div');
+                quizCard.className = 'quiz-card';
+                
+                quizCard.innerHTML = `
+                    <div class="quiz-header">
+                        <div>
+                            <h3 class="quiz-title">${quiz.quizname}</h3>
+                            <span class="quiz-course">${quiz.course}</span>
                         </div>
                     </div>
-                    <div class="element-content">${quizInfo.quiz_name} - ${quizInfo.course} - ${quizInfo.time} minutes</div>
-                `;
-                elementList.appendChild(quizInfoItem);
-            }
-            
-            // Show other elements
-            quizElements.forEach(element => {
-                const elementItem = document.createElement('div');
-                elementItem.className = 'element-item';
-                
-                let content = '';
-                let typeLabel = '';
-                
-                if (element.type === 'heading') {
-                    content = element.content;
-                    typeLabel = 'Heading';
-                } else if (element.type === 'Instruction') {
-                    content = element.content[0];
-                    typeLabel = 'Instruction';
-                } else if (element.type === 'Question') {
-                    content = element.Question.content;
-                    typeLabel = 'Question';
-                } else if (element.type === 'img') {
-                    content = element.content.substring(0, 50) + '...';
-                    typeLabel = 'Media';
-                }
-                
-                elementItem.innerHTML = `
-                    <div class="element-header">
-                        <span class="element-type">${typeLabel}</span>
-                        <div class="element-actions">
-                            <button class="btn" onclick="moveElementUp(${element.id})"><i class="fas fa-arrow-up"></i></button>
-                            <button class="btn" onclick="moveElementDown(${element.id})"><i class="fas fa-arrow-down"></i></button>
-                            <button class="btn btn-danger" onclick="removeElement(${element.id})"><i class="fas fa-trash"></i></button>
-                        </div>
+                    
+                    <div class="quiz-author">
+                        <i class="fas fa-user"></i>
+                        <span>Created by ${quiz.author}</span>
                     </div>
-                    <div class="element-content">${content}</div>
+                    
+                    <div class="quiz-preview">
+                        <div class="preview-label">First Question Preview</div>
+                        <div class="first-question">${quiz.first_question}</div>
+                    </div>
+                    
+                    <div class="quiz-footer">
+                        <span class="quiz-id">ID: ${quiz.id}</span>
+                        <button class="btn" onclick="takeQuiz('${quiz.id}')"><i class="fas fa-play"></i> Take Quiz</button>
+                    </div>
                 `;
                 
-                elementList.appendChild(elementItem);
+                quizGrid.appendChild(quizCard);
             });
-        }
-        
-        // Update preview
-        function updatePreview() {
-            previewContent.innerHTML = '';
             
-            if (!quizInfo && quizElements.length === 0) {
-                previewContent.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-file-alt"></i>
-                        <p>Your quiz preview will appear here as you add elements.</p>
-                    </div>
-                `;
+            // Update quiz count
+            quizCount.textContent = `Showing ${quizzesToDisplay.length} ${quizzesToDisplay.length === 1 ? 'quiz' : 'quizzes'}`;
+        }
+
+        // Update current filter
+        function updateFilter() {
+            filterRadios.forEach(radio => {
+                if (radio.checked) {
+                    currentFilter = radio.value;
+                }
+            });
+            searchQuizzes();
+        }
+
+        // Search functionality
+        function searchQuizzes() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            
+            if (searchTerm === '') {
+                // If search is empty, show all quizzes
+                const sortedQuizzes = sortQuizzes([...quizzes]);
+                displayQuizzes(sortedQuizzes);
                 return;
             }
             
-            // Show quiz info first
-            if (quizInfo) {
-                const quizInfoDiv = document.createElement('div');
-                quizInfoDiv.className = 'quiz-element';
-                quizInfoDiv.innerHTML = `
-                    <h2 class="quiz-heading">${quizInfo.quiz_name}</h2>
-                    <p><strong>Course:</strong> ${quizInfo.course}</p>
-                    <p><strong>Time Allowed:</strong> ${quizInfo.time} minutes</p>
-                    ${quizInfo.topics.length > 0 ? `<p><strong>Topics:</strong> ${quizInfo.topics.join(', ')}</p>` : ''}
-                `;
-                previewContent.appendChild(quizInfoDiv);
-            }
-            
-            // Show other elements
-            quizElements.forEach(element => {
-                const elementDiv = document.createElement('div');
-                elementDiv.className = 'quiz-element';
-                
-                if (element.type === 'heading') {
-                    elementDiv.innerHTML = `<h3 class="quiz-heading">${element.content}</h3>`;
-                } else if (element.type === 'Instruction') {
-                    elementDiv.innerHTML = `<p class="quiz-instruction">${element.content[0]}</p>`;
-                } else if (element.type === 'Question') {
-                    let hintHtml = '';
-                    if (element.Hint) {
-                        hintHtml = `<div class="hint-box"><strong>Hint:</strong> ${element.Hint.content}</div>`;
-                    }
-                    
-                    let optionsHtml = '';
-                    if (element.Question.type === 'multiple-choice' && element.Question.options) {
-                        optionsHtml = `<div style="margin: 15px 0;"><strong>Options:</strong><ul style="margin-left: 20px;">${element.Question.options.map(opt => `<li>${opt}</li>`).join('')}</ul></div>`;
-                    } else if (element.Question.type === 'true-false') {
-                        optionsHtml = `<div style="margin: 15px 0;"><strong>Options:</strong> True, False</div>`;
-                    }
-                    
-                    let explanationHtml = '';
-                    if (element.Explanation) {
-                        let explanationText = element.Explanation.content
-                            .replace(/##(.*?)##/g, '<strong style="font-size:1.2em;color:var(--strongColor)">$1</strong>')
-                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                            .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                            .replace(/_(.*?)_/g, '<em>$1</em>')
-                            .replace(/~~(.*?)~~/g, '<del>$1</del>')
-                            .replace(/\+\+(.*?)\+\+/g, '<u>$1</u>')
-                            .replace(/==(.*?)==/g, '<span class="highlight">$1</span>')
-                            .replace(/^- (.*$)/gim, '<li>$1</li>')
-                            .replace(/^1\. (.*$)/gim, '<li>$1</li>')
-                            .replace(/(<li>.*<\/li>)/g, '<ul>$1</ul>');
-                        
-                        explanationHtml = `<div class="quiz-explanation">${explanationText}</div>`;
-                    }
-                    
-                    elementDiv.innerHTML = `
-                        <h3 class="quiz-heading">${element.name}</h3>
-                        ${element.topic.length > 0 ? `<p><strong>Topics:</strong> ${element.topic.join(', ')}</p>` : ''}
-                        <p class="quiz-question">${element.Question.content}</p>
-                        ${optionsHtml}
-                        ${hintHtml}
-                        <p><strong>Answer:</strong> ${element.Answer.content}</p>
-                        ${explanationHtml}
-                    `;
-                } else if (element.type === 'img') {
-                    // Check if it's a YouTube URL
-                    if (element.content.includes('youtube.com') || element.content.includes('youtu.be')) {
-                        const videoId = extractYouTubeId(element.content);
-                        if (videoId) {
-                            elementDiv.innerHTML = `
-                                <iframe class="quiz-video" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
-                            `;
-                        } else {
-                            elementDiv.innerHTML = `<p>Invalid YouTube URL: ${element.content}</p>`;
-                        }
-                    } else {
-                        elementDiv.innerHTML = `<img src="${element.content}" alt="Quiz diagram" class="quiz-image">`;
-                    }
+            let filteredQuizzes = quizzes.filter(quiz => {
+                switch(currentFilter) {
+                    case 'author':
+                        return quiz.author.toLowerCase().includes(searchTerm);
+                    case 'name':
+                        return quiz.quizname.toLowerCase().includes(searchTerm);
+                    case 'course':
+                        return quiz.course.toLowerCase().includes(searchTerm);
+                    case 'question':
+                        return quiz.first_question.toLowerCase().includes(searchTerm);
+                    case 'all':
+                    default:
+                        return (
+                            quiz.author.toLowerCase().includes(searchTerm) ||
+                            quiz.quizname.toLowerCase().includes(searchTerm) ||
+                            quiz.course.toLowerCase().includes(searchTerm) ||
+                            quiz.first_question.toLowerCase().includes(searchTerm)
+                        );
                 }
-                
-                previewContent.appendChild(elementDiv);
+            });
+            
+            // Sort the filtered results
+            const sortedQuizzes = sortQuizzes(filteredQuizzes);
+            displayQuizzes(sortedQuizzes);
+        }
+
+        // Sort quizzes
+        function sortQuizzes(quizzesToSort) {
+            const sortBy = sortSelect.value;
+            
+            return [...quizzesToSort].sort((a, b) => {
+                switch(sortBy) {
+                    case 'newest':
+                        return new Date(b.date) - new Date(a.date);
+                    case 'oldest':
+                        return new Date(a.date) - new Date(b.date);
+                    case 'name':
+                        return a.quizname.localeCompare(b.quizname);
+                    case 'course':
+                        return a.course.localeCompare(b.course);
+                    default:
+                        return 0;
+                }
             });
         }
-        
-        // Extract YouTube video ID from URL
-        function extractYouTubeId(url) {
-            const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-            const match = url.match(regExp);
-            return (match && match[7].length === 11) ? match[7] : false;
+
+        // Take quiz function
+        function takeQuiz(quizId) {
+            alert(`Starting quiz with ID: ${quizId}\n\nThis would navigate to the quiz taking interface.`);
+            // In a real application, this would redirect to the quiz taking page
+            // window.location.href = `take-quiz.html?id=${quizId}`;
         }
-        
-        // Clear all elements
-        document.getElementById('clear-all').addEventListener('click', function() {
-            if (confirm('Are you sure you want to clear all quiz elements?')) {
-                quizElements = [];
-                quizInfo = null;
-                quizInfoTopics = [];
-                updateElementList();
-                updatePreview();
-                updateQuizInfoBanner();
+
+        // Event listeners
+        searchBtn.addEventListener('click', searchQuizzes);
+        searchInput.addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                searchQuizzes();
             }
         });
-        
-        // Create quiz JSON
-        document.getElementById('create-quiz').addEventListener('click', function() {
-            if (!quizInfo) {
-                alert('Please add quiz info before creating JSON.');
-                return;
-            }
-            
-            // Create the final quiz data array
-            const quizData = [];
-            
-            // Add quizInfo first
-            quizData.push({
-                type: "quizInfo",
-                kind: "pureOBJ",
-                quiz_name: quizInfo.quiz_name,
-                course: quizInfo.course,
-                topics: [...quizInfo.topics],
-                time: quizInfo.time
-            });
-            
-            // Add other elements
-            quizElements.forEach(element => {
-                const cleanElement = JSON.parse(JSON.stringify(element));
-                delete cleanElement.id;
-                delete cleanElement.timestamp;
-                quizData.push(cleanElement);
-            });
-            
-            // Log to console
-            console.log('Quiz JSON:', quizData);
-            
-            // Show success message
-            alert('Quiz JSON has been created and logged to the console!');
-            
-            // Optionally, display the JSON in the preview area
-            previewContent.innerHTML = `<pre style="background: #f5f5f5; padding: 15px; border-radius: var(--border-radius); overflow: auto;">${JSON.stringify(quizData, null, 2)}</pre>`;
+
+        searchInput.addEventListener('input', function() {
+            // Real-time search as user types
+            searchQuizzes();
         });
-        
-        // Initialize the UI
-        updateElementList();
-        updatePreview();
-        updateQuizInfoBanner();
+
+        sortSelect.addEventListener('change', searchQuizzes);
+
+        // Filter radio change handlers
+        filterRadios.forEach(radio => {
+            radio.addEventListener('change', updateFilter);
+        });
+
+        // Initialize the page
+        const sortedQuizzes = sortQuizzes([...quizzes]);
+        displayQuizzes(sortedQuizzes);
     </script>
 </body>
 </html>
-```
-
-Key Changes Made:
-
-1. Replaced Quiz Title with Quiz Name and Course:
-   · Changed "Quiz Title" field to "Quiz Name"
-   · Added a new "Course" field
-   · Updated all references in the code from quiz_title to quiz_name
-   · Added course information to the quiz info banner and preview
-2. Maintained All Other Features:
-   · Single quizInfo element
-   · Markdown formatting for explanations
-   · Multiple choice options with validation
-   · True/False auto-options
-   · Responsive design
-   · Modern interface
-
-The builder now uses "Quiz Name" and "Course" fields instead of "Quiz Title", providing a more comprehensive way to identify quizzes.
