@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson Notes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .error {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        /* Content Element Styles */
+        .content-element {
+            margin-bottom: 24px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .heading {
+            color: #1f2937;
+            margin: 32px 0 16px 0;
+            line-height: 1.3;
+        }
+
+        .heading-1 { font-size: 2rem; font-weight: 800; }
+        .heading-2 { font-size: 1.75rem; font-weight: 700; }
+        .heading-3 { font-size: 1.5rem; font-weight: 600; }
+        .heading-4 { font-size: 1.25rem; font-weight: 600; }
+
+        .paragraph {
+            font-size: 1.1rem;
+            color: #4b5563;
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        .line {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #d1d5db, transparent);
+            margin: 32px 0;
+        }
+
+        .line.solid { background: #d1d5db; }
+        .line.dashed { 
+            background: transparent;
+            border-bottom: 2px dashed #d1d5db;
+        }
+        .line.dotted { 
+            background: transparent;
+            border-bottom: 2px dotted #d1d5db;
+        }
+
+        .list {
+            margin: 16px 0;
+            padding-left: 24px;
+        }
+
+        .list-unordered li {
+            list-style-type: disc;
+            margin-bottom: 8px;
+            color: #4b5563;
+        }
+
+        .list-ordered li {
+            list-style-type: decimal;
+            margin-bottom: 8px;
+            color: #4b5563;
+        }
+
+        .equation {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: 'Times New Roman', serif;
+            font-size: 1.4rem;
+        }
+
+        .equation .description {
+            display: block;
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-top: 8px;
+            font-style: italic;
+            font-family: inherit;
+        }
+
+        .diagram, .image {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 24px 0;
+            text-align: center;
+        }
+
+        .diagram img, .image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .diagram .title, .image .caption {
+            display: block;
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-top: 12px;
+            font-weight: 500;
+        }
+
+        .code {
+            background: #1f2937;
+            color: #f3f4f6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .code .filename {
+            display: block;
+            color: #9ca3af;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .quote {
+            border-left: 4px solid #4f46e5;
+            padding-left: 20px;
+            margin: 24px 0;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .quote .author {
+            display: block;
+            margin-top: 8px;
+            font-weight: 600;
+            color: #4b5563;
+            font-style: normal;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .table th {
+            background: #4f46e5;
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .table tr:hover {
+            background: #f9fafb;
+        }
+
+        .table-caption {
+            display: block;
+            text-align: center;
+            margin-top: 8px;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        /* Text Formatting */
+        .bold { font-weight: 700; }
+        .italic { font-style: italic; }
+        .underline { text-decoration: underline; }
+        .strike { text-decoration: line-through; }
+        .code-inline {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+            color: #dc2626;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #fef3c7, #fef3c7);
+            padding: 0 4px;
+            border-radius: 2px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                border-radius: 12px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            .heading-1 { font-size: 1.75rem; }
+            .heading-2 { font-size: 1.5rem; }
+            .heading-3 { font-size: 1.25rem; }
+            .heading-4 { font-size: 1.1rem; }
+
+            .paragraph {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.75rem;
+            }
+
+            .equation {
+                font-size: 1.2rem;
+                padding: 15px;
+            }
+
+            .code {
+                padding: 15px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Lesson Notes</h1>
+            <p>Interactive learning materials</p>
+        </div>
+        
+        <div class="content" id="content">
+            <div class="loading">Loading lesson content...</div>
+        </div>
+    </div>
+
+    <script>
+        class LessonRenderer {
+            constructor() {
+                this.contentElement = document.getElementById('content');
+            }
+
+            async loadLesson() {
+                try {
+                    const response = await fetch('./view.json');
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const lessonData = await response.json();
+                    this.render(lessonData);
+                } catch (error) {
+                    this.showError(`Failed to load lesson: ${error.message}`);
+                }
+            }
+
+            showError(message) {
+                this.contentElement.innerHTML = `
+                    <div class="error">
+                        <h3>Error Loading Content</h3>
+                        <p>${message}</p>
+                        <button onclick="location.reload()" style="
+                            margin-top: 10px;
+                            padding: 8px 16px;
+                            background: #dc2626;
+                            color: white;
+                            border: none;
+                            border-radius: 4px;
+                            cursor: pointer;
+                        ">Try Again</button>
+                    </div>
+                `;
+            }
+
+            render(data) {
+                if (!Array.isArray(data)) {
+                    this.showError('Invalid data format: expected array');
+                    return;
+                }
+
+                let html = '';
+                data.forEach((item, index) => {
+                    html += this.renderElement(item, index);
+                });
+
+                this.contentElement.innerHTML = html;
+            }
+
+            renderElement(item, index) {
+                const delay = index * 100;
+                
+                switch (item.type) {
+                    case 'heading':
+                        return this.renderHeading(item, delay);
+                    case 'paragraph':
+                        return this.renderParagraph(item, delay);
+                    case 'line':
+                        return this.renderLine(item, delay);
+                    case 'list':
+                        return this.renderList(item, delay);
+                    case 'equation':
+                        return this.renderEquation(item, delay);
+                    case 'diagram':
+                        return this.renderDiagram(item, delay);
+                    case 'image':
+                        return this.renderImage(item, delay);
+                    case 'code':
+                        return this.renderCode(item, delay);
+                    case 'quote':
+                        return this.renderQuote(item, delay);
+                    case 'table':
+                        return this.renderTable(item, delay);
+                    default:
+                        return this.renderUnknown(item, delay);
+                }
+            }
+
+            renderHeading(item, delay) {
+                const level = item.level || 2;
+                const content = this.formatText(item.content);
+                return `
+                    <div class="content-element heading heading-${level}" style="animation-delay: ${delay}ms">
+                        ${content}
+                    </div>
+                `;
+            }
+
+            renderParagraph(item, delay) {
+                let content;
+                if (Array.isArray(item.content)) {
+                    content = item.content.map(part => {
+                        if (typeof part === 'string') return part;
+                        return this.formatStyledText(part);
+                    }).join('');
+                } else {
+                    content = this.formatText(item.content || '');
+                }
+                
+                return `
+                    <div class="content-element paragraph" style="animation-delay: ${delay}ms">
+                        ${content}
+                    </div>
+                `;
+            }
+
+            renderLine(item, delay) {
+                const style = item.style || 'solid';
+                return `
+                    <div class="content-element line ${style}" style="animation-delay: ${delay}ms"></div>
+                `;
+            }
+
+            renderList(item, delay) {
+                const style = item.style || 'unordered';
+                const listClass = style === 'ordered' ? 'list-ordered' : 'list-unordered';
+                const items = (item.items || []).map(listItem => 
+                    `<li>${this.formatText(listItem)}</li>`
+                ).join('');
+                
+                return `
+                    <div class="content-element list ${listClass}" style="animation-delay: ${delay}ms">
+                        ${style === 'ordered' ? '<ol>' + items + '</ol>' : '<ul>' + items + '</ul>'}
+                    </div>
+                `;
+            }
+
+            renderEquation(item, delay) {
+                const description = item.description ? 
+                    `<span class="description">${item.description}</span>` : '';
+                
+                return `
+                    <div class="content-element equation" style="animation-delay: ${delay}ms">
+                        ${this.formatText(item.content || '')}
+                        ${description}
+                    </div>
+                `;
+            }
+
+            renderDiagram(item, delay) {
+                const title = item.title ? `<span class="title">${item.title}</span>` : '';
+                const content = item.src ? 
+                    `<img src="${item.src}" alt="${item.alt || ''}">` : 
+                    (item.data || 'Diagram content');
+                
+                return `
+                    <div class="content-element diagram" style="animation-delay: ${delay}ms">
+                        ${content}
+                        ${title}
+                    </div>
+                `;
+            }
+
+            renderImage(item, delay) {
+                const caption = item.caption ? `<span class="caption">${item.caption}</span>` : '';
+                
+                return `
+                    <div class="content-element image" style="animation-delay: ${delay}ms">
+                        <img src="${item.src}" alt="${item.alt || ''}" 
+                             style="max-width: ${item.width || '100%'}; height: ${item.height || 'auto'};">
+                        ${caption}
+                    </div>
+                `;
+            }
+
+            renderCode(item, delay) {
+                const filename = item.filename ? `<span class="filename">${item.filename}</span>` : '';
+                return `
+                    <div class="content-element code" style="animation-delay: ${delay}ms">
+                        ${filename}
+                        <pre><code>${this.escapeHtml(item.content || '')}</code></pre>
+                    </div>
+                `;
+            }
+
+            renderQuote(item, delay) {
+                const author = item.author ? `<span class="author">— ${item.author}</span>` : '';
+                return `
+                    <div class="content-element quote" style="animation-delay: ${delay}ms">
+                        ${this.formatText(item.content || '')}
+                        ${author}
+                    </div>
+                `;
+            }
+
+            renderTable(item, delay) {
+                const headers = (item.headers || []).map(header => 
+                    `<th>${this.formatText(header)}</th>`
+                ).join('');
+                
+                const rows = (item.rows || []).map(row => 
+                    `<tr>${row.map(cell => `<td>${this.formatText(cell)}</td>`).join('')}</tr>`
+                ).join('');
+                
+                const caption = item.caption ? 
+                    `<span class="table-caption">${item.caption}</span>` : '';
+                
+                return `
+                    <div class="content-element" style="animation-delay: ${delay}ms">
+                        <table class="table">
+                            <thead><tr>${headers}</tr></thead>
+                            <tbody>${rows}</tbody>
+                        </table>
+                        ${caption}
+                    </div>
+                `;
+            }
+
+            renderUnknown(item, delay) {
+                return `
+                    <div class="content-element error" style="animation-delay: ${delay}ms">
+                        Unknown content type: ${item.type}
+                    </div>
+                `;
+            }
+
+            formatText(text) {
+                if (!text) return '';
+                
+                // Markdown-style formatting
+                return text
+                    .replace(/\*\*(.*?)\*\*/g, '<span class="bold">$1</span>')
+                    .replace(/\*(.*?)\*/g, '<span class="italic">$1</span>')
+                    .replace(/_(.*?)_/g, '<span class="underline">$1</span>')
+                    .replace(/~~(.*?)~~/g, '<span class="strike">$1</span>')
+                    .replace(/`(.*?)`/g, '<span class="code-inline">$1</span>');
+            }
+
+            formatStyledText(part) {
+                if (typeof part === 'string') return part;
+                
+                let className = '';
+                if (part.format) {
+                    if (Array.isArray(part.format)) {
+                        className = part.format.map(f => f.toLowerCase()).join(' ');
+                    } else {
+                        className = part.format.toLowerCase();
+                    }
+                }
+                
+                let style = '';
+                if (part.color) style += `color: ${part.color};`;
+                if (part.highlight) style += `background: ${part.highlight};`;
+                
+                return `<span class="${className}" style="${style}">${part.text || ''}</span>`;
+            }
+
+            escapeHtml(unsafe) {
+                return unsafe
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+        }
+
+        // Initialize and load the lesson when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            const renderer = new LessonRenderer();
+            renderer.loadLesson();
+        });
+    </script>
+</body>
+</html>
