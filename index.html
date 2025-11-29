@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuizHub - Browse Quizzes</title>
+    <title>QuizPulse</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -463,7 +463,7 @@
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-graduation-cap"></i> QuizHub</h1>
+            <h1><i class="fas fa-graduation-cap"></i> QuizPulse</h1>
             <p class="subtitle">Discover and take quizzes created by fellow students and tutors</p>
             
             <div class="actions">
@@ -543,7 +543,7 @@
                 author: "Prof John",
                 id: "r2746476gd",
                 first_question: "What is the atomic number of Carbon?",
-                date: "2023-10-15"
+                modified : "2023-10-15"
             },
             {
                 quizname: "Physics Fundamentals",
@@ -551,7 +551,7 @@
                 author: "Dr. Smith",
                 id: "p8364920hd",
                 first_question: "What is Newton's First Law of Motion?",
-                date: "2023-09-22"
+                modified : "2023-09-22"
             },
             {
                 quizname: "Cell Biology Quiz",
@@ -559,7 +559,7 @@
                 author: "Prof. Johnson",
                 id: "b5283746ks",
                 first_question: "What is the function of mitochondria?",
-                date: "2023-11-05"
+                modified : "2023-11-05"
             },
             {
                 quizname: "Algebra Test",
@@ -567,7 +567,7 @@
                 author: "Dr. Williams",
                 id: "m9274635ls",
                 first_question: "Solve for x: 2x + 5 = 15",
-                date: "2023-08-30"
+                modified : "2023-08-30"
             },
             {
                 quizname: "Organic Chemistry",
@@ -575,7 +575,7 @@
                 author: "Prof. Davis",
                 id: "c6382917md",
                 first_question: "What is the molecular formula of benzene?",
-                date: "2023-10-28"
+                modified : "2023-10-28"
             },
             {
                 quizname: "Thermodynamics",
@@ -583,7 +583,7 @@
                 author: "Dr. Anderson",
                 id: "p4728193nd",
                 first_question: "Define the First Law of Thermodynamics",
-                date: "2023-09-10"
+                modified : "2023-09-10"
             }
         ];
 
@@ -702,9 +702,9 @@
             return [...quizzesToSort].sort((a, b) => {
                 switch(sortBy) {
                     case 'newest':
-                        return new Date(b.date) - new Date(a.date);
+                        return new Date(b.modified) - new Date(a.modified);
                     case 'oldest':
-                        return new Date(a.date) - new Date(b.date);
+                        return new Date(a.modified) - new Date(b.modified);
                     case 'name':
                         return a.quizname.localeCompare(b.quizname);
                     case 'course':
