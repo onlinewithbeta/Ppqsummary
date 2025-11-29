@@ -1,623 +1,655 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuizPulse</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #1e40af;
-            --primary-light: #3b82f6;
-            --primary-dark: #1e3a8a;
-            --primary-soft: #dbeafe;
-            --secondary: #0369a1;
-            --success: #059669;
-            --light: #f8fafc;
-            --dark: #1e293b;
-            --gray: #64748b;
-            --border-radius: 16px;
-            --box-shadow: 0 8px 32px rgba(30, 64, 175, 0.1);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-            color: var(--dark);
-            line-height: 1.6;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            color: var(--dark);
-            padding: 2.5rem 2rem;
-            text-align: center;
-            border-radius: var(--border-radius);
-            margin-bottom: 2rem;
-            box-shadow: var(--box-shadow);
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--secondary));
-        }
-        
-        h1 {
-            font-size: 2.75rem;
-            margin-bottom: 0.75rem;
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-        
-        .subtitle {
-            font-size: 1.25rem;
-            opacity: 0.8;
-            max-width: 600px;
-            margin: 0 auto;
-            font-weight: 400;
-            color: var(--primary-dark);
-        }
-        
-        .actions {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 2rem;
-            flex-wrap: wrap;
-        }
-        
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 1rem 2rem;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            text-align: center;
-            text-decoration: none;
-            box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
-        }
-        
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(30, 64, 175, 0.4);
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-        }
-        
-        .btn-success {
-            background: linear-gradient(135deg, var(--success), #047857);
-            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
-        }
-        
-        .btn-success:hover {
-            box-shadow: 0 8px 25px rgba(5, 150, 105, 0.4);
-            background: linear-gradient(135deg, #047857, #065f46);
-        }
-        
-        .quiz-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-        
-        .quiz-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: var(--border-radius);
-            padding: 2rem;
-            box-shadow: var(--box-shadow);
-            transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .quiz-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--primary-light));
-            transform: scaleX(0);
-            transition: var(--transition);
-        }
-        
-        .quiz-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(30, 64, 175, 0.15);
-        }
-        
-        .quiz-card:hover::before {
-            transform: scaleX(1);
-        }
-        
-        .quiz-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1.25rem;
-        }
-        
-        .quiz-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--primary-dark);
-            margin-bottom: 0.75rem;
-            line-height: 1.3;
-        }
-        
-        .quiz-course {
-            font-size: 0.85rem;
-            color: white;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            padding: 0.4rem 1rem;
-            border-radius: 50px;
-            display: inline-block;
-            font-weight: 600;
-            box-shadow: 0 2px 8px rgba(30, 64, 175, 0.2);
-        }
-        
-        .quiz-author {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 1.5rem;
-            color: var(--gray);
-            font-size: 0.95rem;
-        }
-        
-        .quiz-author i {
-            color: var(--primary);
-            background: rgba(30, 64, 175, 0.1);
-            padding: 0.5rem;
-            border-radius: 50%;
-        }
-        
-        .quiz-preview {
-            flex-grow: 1;
-            margin-bottom: 2rem;
-        }
-        
-        .preview-label {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            color: var(--gray);
-            margin-bottom: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-        
-        .first-question {
-            color: var(--dark);
-            line-height: 1.6;
-            padding: 1.25rem;
-            background: rgba(30, 64, 175, 0.05);
-            border-radius: 12px;
-            border-left: 4px solid var(--primary);
-            font-style: italic;
-        }
-        
-        .quiz-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: auto;
-        }
-        
-        .quiz-id {
-            font-size: 0.8rem;
-            color: var(--gray);
-            font-family: 'JetBrains Mono', monospace;
-            background: rgba(30, 64, 175, 0.05);
-            padding: 0.4rem 0.8rem;
-            border-radius: 8px;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: var(--gray);
-            grid-column: 1 / -1;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: var(--border-radius);
-            backdrop-filter: blur(10px);
-        }
-        
-        .empty-state i {
-            font-size: 4rem;
-            margin-bottom: 1.5rem;
-            opacity: 0.5;
-            color: var(--primary);
-        }
-        
-        .search-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: var(--border-radius);
-            padding: 2rem;
-            box-shadow: var(--box-shadow);
-            margin-bottom: 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .search-box {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .search-box input {
-            flex: 1;
-            padding: 1rem 1.5rem;
-            border: 2px solid rgba(30, 64, 175, 0.1);
-            border-radius: 50px;
-            font-size: 1rem;
-            transition: var(--transition);
-            background: rgba(255, 255, 255, 0.8);
-        }
-        
-        .search-box input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
-            background: white;
-        }
-        
-        .search-filters {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .filter-label {
-            font-weight: 700;
-            color: var(--primary-dark);
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .filter-label i {
-            color: var(--primary);
-        }
-        
-        .filter-options {
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-        }
-        
-        .filter-option {
-            position: relative;
-            cursor: pointer;
-        }
-        
-        .filter-option input {
-            position: absolute;
-            opacity: 0;
-            cursor: pointer;
-        }
-        
-        .filter-label-text {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            border: 2px solid rgba(30, 64, 175, 0.2);
-            border-radius: 50px;
-            transition: var(--transition);
-            font-weight: 500;
-            background: rgba(255, 255, 255, 0.8);
-            color: var(--primary-dark);
-        }
-        
-        .filter-option input:checked + .filter-label-text {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: white;
-            border-color: var(--primary);
-            box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
-            transform: translateY(-2px);
-        }
-        
-        .filter-option:hover .filter-label-text {
-            border-color: var(--primary);
-            transform: translateY(-2px);
-            background: rgba(30, 64, 175, 0.05);
-        }
-        
-        .stats {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            color: white;
-            font-size: 0.95rem;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 1rem 1.5rem;
-            border-radius: 50px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .sort-select {
-            background: rgba(255, 255, 255, 0.9);
-            border: 2px solid rgba(30, 64, 175, 0.2);
-            border-radius: 50px;
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
-            color: var(--primary-dark);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .sort-select:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-        
-        @media (max-width: 768px) {
-            .quiz-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-            
-            .actions {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .btn {
-                width: 100%;
-                max-width: 300px;
-            }
-            
-            .search-box {
-                flex-direction: column;
-            }
-            
-            .filter-options {
-                justify-content: center;
-            }
-            
-            .stats {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
-                border-radius: var(--border-radius);
-            }
-            
-            h1 {
-                font-size: 2.25rem;
-            }
-            
-            .subtitle {
-                font-size: 1.1rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            header {
-                padding: 2rem 1.5rem;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .quiz-card {
-                padding: 1.5rem;
-            }
-            
-            .search-container {
-                padding: 1.5rem;
-            }
-            
-            .filter-label-text {
-                padding: 0.6rem 1.25rem;
-                font-size: 0.9rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1><i class="fas fa-graduation-cap"></i> QuizPulse</h1>
-            <p class="subtitle">Discover and take quizzes created by fellow students and tutors</p>
-            
-            <div class="actions">
-                <a href="quiz-builder.html" class="btn btn-success"><i class="fas fa-plus-circle"></i> Create New Quiz</a>
-            </div>
-        </header>
-        
-        <div class="search-container">
-            <div class="search-box">
-                <input type="text" id="search-input" placeholder="What are you looking for?">
-                <button class="btn" id="search-btn"><i class="fas fa-search"></i> Search</button>
-            </div>
-            
-            <div class="search-filters">
-                <div class="filter-label">
-                    <i class="fas fa-filter"></i>
-                    Search by:
-                </div>
-                <div class="filter-options">
-                    <label class="filter-option">
-                        <input type="radio" name="search-filter" value="all" checked>
-                        <span class="filter-label-text">
-                            <i class="fas fa-layer-group"></i>All Fields
-                        </span>
-                    </label>
-                    <label class="filter-option">
-                        <input type="radio" name="search-filter" value="author">
-                        <span class="filter-label-text">
-                            <i class="fas fa-user"></i>Author
-                        </span>
-                    </label>
-                    <label class="filter-option">
-                        <input type="radio" name="search-filter" value="name">
-                        <span class="filter-label-text">
-                            <i class="fas fa-heading"></i>Quiz Name
-                        </span>
-                    </label>
-                    <label class="filter-option">
-                        <input type="radio" name="search-filter" value="course">
-                        <span class="filter-label-text">
-                            <i class="fas fa-book"></i>Course
-                        </span>
-                    </label>
-                    <label class="filter-option">
-                        <input type="radio" name="search-filter" value="question">
-                        <span class="filter-label-text">
-                            <i class="fas fa-question"></i>First Question
-                        </span>
-                    </label>
-                </div>
-            </div>
-        </div>
-        
-        <div class="stats">
-            <span id="quiz-count">Showing 6 quizzes</span>
-            <span>Sorted by: 
-                <select class="sort-select" id="sort-select">
-                    <option value="newest">Newest First</option>
-                    <option value="oldest">Oldest First</option>
-                    <option value="name">Name (A-Z)</option>
-                    <option value="course">Course</option>
-                </select>
-            </span>
-        </div>
-        
-        <div class="quiz-grid" id="quiz-grid">
-            <!-- Quiz cards will be dynamically inserted here -->
-        </div>
+ <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuizPulse</title>
+  <link
+   rel="stylesheet"
+   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+  <style>
+   :root {
+    --primary: #1e40af;
+    --primary-light: #3b82f6;
+    --primary-dark: #1e3a8a;
+    --primary-soft: #dbeafe;
+    --secondary: #0369a1;
+    --success: #059669;
+    --light: ##b1b1b1;
+    --dark: ##7f7f7f;
+    --gray: #f8fafc;
+    --quiz-card: #0d1d52;
+    --border-radius: 16px;
+    --box-shadow: 0 8px 32px rgba(30, 64, 175, 0.1);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+   }
+
+   
+
+   * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+   }
+
+   body {
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    color: var(--dark);
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 20px;
+   }
+
+   .container {
+    max-width: 1200px;
+    margin: 0 auto;
+   }
+
+   header {
+    background: rgba(255, 255, 255, 0.95);
+    background: var(--quiz-card);
+
+    backdrop-filter: blur(10px);
+    color: var(--primary-soft);
+    padding: 2.5rem 2rem;
+    text-align: center;
+    border-radius: var(--border-radius);
+    margin-bottom: 2rem;
+    box-shadow: var(--box-shadow);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+   }
+
+   header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(
+     90deg,
+     var(--primary),
+     var(--primary-light),
+     var(--secondary)
+    );
+
+    background: var(--quiz-card);
+   }
+
+   h1 {
+    font-size: 2.75rem;
+    margin-bottom: 0.75rem;
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+   }
+
+   .subtitle {
+    font-size: 1.25rem;
+    opacity: 0.8;
+    max-width: 600px;
+    margin: 0 auto;
+    font-weight: 400;
+    color: var(--primary-dark);
+   }
+
+   .actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+   }
+
+   .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
+   }
+
+   .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(30, 64, 175, 0.4);
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+   }
+
+   .btn-success {
+    background: linear-gradient(135deg, var(--success), #047857);
+    box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+   }
+
+   .btn-success:hover {
+    box-shadow: 0 8px 25px rgba(5, 150, 105, 0.4);
+    background: linear-gradient(135deg, #047857, #065f46);
+   }
+
+   .quiz-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+   }
+
+   .quiz-card {
+    background: rgba(255, 255, 255, 0.95);
+    background: var(--quiz-card);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+   }
+
+   .quiz-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--primary-light));
+    transform: scaleX(0);
+    transition: var(--transition);
+   }
+
+   .quiz-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(30, 64, 175, 0.15);
+   }
+
+   .quiz-card:hover::before {
+    transform: scaleX(1);
+   }
+
+   .quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.25rem;
+   }
+
+   .quiz-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+   }
+
+   .quiz-course {
+    font-size: 0.85rem;
+    color: white;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    display: inline-block;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(30, 64, 175, 0.2);
+   }
+
+   .quiz-author {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+    color: var(--gray);
+    font-size: 0.95rem;
+   }
+
+   .quiz-author i {
+    color: var(--primary);
+    background: rgba(30, 64, 175, 0.1);
+    padding: 0.5rem;
+    border-radius: 50%;
+   }
+
+   .quiz-preview {
+    flex-grow: 1;
+    margin-bottom: 2rem;
+   }
+
+   .preview-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+   }
+
+   .first-question {
+    color: #7f7f7f;
+    line-height: 1.6;
+    padding: 1.25rem;
+    background: rgba(30, 64, 175, 0.05);
+    border-radius: 12px;
+    border-left: 4px solid var(--primary);
+    font-style: italic;
+   }
+
+   .quiz-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+   }
+
+   .quiz-id {
+    font-size: 0.8rem;
+    color: var(--gray);
+    font-family: "JetBrains Mono", monospace;
+    background: rgba(30, 64, 175, 0.05);
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+   }
+
+   .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--gray);
+    grid-column: 1 / -1;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: var(--border-radius);
+    backdrop-filter: blur(10px);
+   }
+
+   .empty-state i {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.5;
+    color: var(--primary);
+   }
+
+   .search-container {
+    background: rgba(255, 255, 255, 0.95);
+    background: var(--quiz-card);
+
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--box-shadow);
+    margin-bottom: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+   }
+
+   .search-box {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+   }
+
+   .search-box input {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    border: 2px solid rgba(30, 64, 175, 0.1);
+    border-radius: 50px;
+    font-size: 1rem;
+    transition: var(--transition);
+    background: rgba(255, 255, 255, 0.8);
+   }
+
+   .search-box input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+    background: white;
+   }
+
+   .search-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+   }
+
+   .filter-label {
+    font-weight: 700;
+    color: var(--primary-dark);
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+   }
+
+   .filter-label i {
+    color: var(--primary);
+   }
+
+   .filter-options {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+   }
+
+   .filter-option {
+    position: relative;
+    cursor: pointer;
+   }
+
+   .filter-option input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+   }
+
+   .filter-label-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: 2px solid rgba(30, 64, 175, 0.2);
+    border-radius: 50px;
+    transition: var(--transition);
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.8);
+    color: var(--primary-dark);
+   }
+
+   .filter-option input:checked + .filter-label-text {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border-color: var(--primary);
+    box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
+    transform: translateY(-2px);
+   }
+
+   .filter-option:hover .filter-label-text {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    background: rgba(30, 64, 175, 0.05);
+   }
+
+   .stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    color: white;
+    font-size: 0.95rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 1rem 1.5rem;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+   }
+
+   .sort-select {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid rgba(30, 64, 175, 0.2);
+    border-radius: 50px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    color: var(--primary-dark);
+    cursor: pointer;
+    transition: var(--transition);
+   }
+
+   .sort-select:focus {
+    outline: none;
+    border-color: var(--primary);
+   }
+
+   @media (max-width: 768px) {
+    .quiz-grid {
+     grid-template-columns: 1fr;
+     gap: 1.5rem;
+    }
+
+    .actions {
+     flex-direction: column;
+     align-items: center;
+    }
+
+    .btn {
+     width: 100%;
+     max-width: 300px;
+    }
+
+    .search-box {
+     flex-direction: column;
+    }
+
+    .filter-options {
+     justify-content: center;
+    }
+
+    .stats {
+     flex-direction: column;
+     gap: 1rem;
+     text-align: center;
+     border-radius: var(--border-radius);
+    }
+
+    h1 {
+     font-size: 2.25rem;
+    }
+
+    .subtitle {
+     font-size: 1.1rem;
+    }
+   }
+
+   @media (max-width: 480px) {
+    header {
+     padding: 2rem 1.5rem;
+    }
+
+    h1 {
+     font-size: 2rem;
+    }
+
+    .quiz-card {
+     padding: 1.5rem;
+    }
+
+    .search-container {
+     padding: 1.5rem;
+    }
+
+    .filter-label-text {
+     padding: 0.6rem 1.25rem;
+     font-size: 0.9rem;
+    }
+   }
+  </style>
+ </head>
+ <body>
+  <div class="container">
+   <header>
+    <h1><i class="fas fa-graduation-cap"></i> QuizPulse</h1>
+    <p class="subtitle">
+     Discover and take quizzes created by fellow students and tutors
+    </p>
+
+    <div class="actions">
+     <a href="quiz-builder.html" class="btn btn-success"
+      ><i class="fas fa-plus-circle"></i> Create New Quiz</a
+     >
+    </div>
+   </header>
+
+   <div class="search-container">
+    <div class="search-box">
+     <input
+      type="text"
+      id="search-input"
+      placeholder="What are you looking for?"
+     />
+     <button class="btn" id="search-btn">
+      <i class="fas fa-search"></i> Search
+     </button>
     </div>
 
-    <script>
-        // Sample quiz data
-        const quizzes = [
-            {
-                quizname: "My Group Quiz",
-                course: "Chemistry",
-                author: "Prof John",
-                id: "r2746476gd",
-                first_question: "What is the atomic number of Carbon?",
-                modified : "2023-10-15"
-            },
-            {
-                quizname: "Physics Fundamentals",
-                course: "Physics",
-                author: "Dr. Smith",
-                id: "p8364920hd",
-                first_question: "What is Newton's First Law of Motion?",
-                modified : "2023-09-22"
-            },
-            {
-                quizname: "Cell Biology Quiz",
-                course: "Biology",
-                author: "Prof. Johnson",
-                id: "b5283746ks",
-                first_question: "What is the function of mitochondria?",
-                modified : "2023-11-05"
-            },
-            {
-                quizname: "Algebra Test",
-                course: "Mathematics",
-                author: "Dr. Williams",
-                id: "m9274635ls",
-                first_question: "Solve for x: 2x + 5 = 15",
-                modified : "2023-08-30"
-            },
-            {
-                quizname: "Organic Chemistry",
-                course: "Chemistry",
-                author: "Prof. Davis",
-                id: "c6382917md",
-                first_question: "What is the molecular formula of benzene?",
-                modified : "2023-10-28"
-            },
-            {
-                quizname: "Thermodynamics",
-                course: "Physics",
-                author: "Dr. Anderson",
-                id: "p4728193nd",
-                first_question: "Define the First Law of Thermodynamics",
-                modified : "2023-09-10"
-            }
-        ];
+    <div class="search-filters">
+     <div class="filter-label">
+      <i class="fas fa-filter"></i>
+      Search by:
+     </div>
+     <div class="filter-options">
+      <label class="filter-option">
+       <input type="radio" name="search-filter" value="all" checked />
+       <span class="filter-label-text">
+        <i class="fas fa-layer-group"></i>All Fields
+       </span>
+      </label>
+      <label class="filter-option">
+       <input type="radio" name="search-filter" value="author" />
+       <span class="filter-label-text">
+        <i class="fas fa-user"></i>Author
+       </span>
+      </label>
+      <label class="filter-option">
+       <input type="radio" name="search-filter" value="name" />
+       <span class="filter-label-text">
+        <i class="fas fa-heading"></i>Quiz Name
+       </span>
+      </label>
+      <label class="filter-option">
+       <input type="radio" name="search-filter" value="course" />
+       <span class="filter-label-text">
+        <i class="fas fa-book"></i>Course
+       </span>
+      </label>
+      <label class="filter-option">
+       <input type="radio" name="search-filter" value="question" />
+       <span class="filter-label-text">
+        <i class="fas fa-question"></i>First Question
+       </span>
+      </label>
+     </div>
+    </div>
+   </div>
 
-        // DOM elements
-        const quizGrid = document.getElementById('quiz-grid');
-        const searchInput = document.getElementById('search-input');
-        const searchBtn = document.getElementById('search-btn');
-        const sortSelect = document.getElementById('sort-select');
-        const quizCount = document.getElementById('quiz-count');
-        const filterRadios = document.querySelectorAll('input[name="search-filter"]');
+   <div class="stats">
+    <span id="quiz-count">Showing 6 quizzes</span>
+    <span
+     >Sorted by:
+     <select class="sort-select" id="sort-select">
+      <option value="newest">Newest First</option>
+      <option value="oldest">Oldest First</option>
+      <option value="name">Name (A-Z)</option>
+      <option value="course">Course</option>
+     </select>
+    </span>
+   </div>
 
-        // Current search filter
-        let currentFilter = 'all';
+   <div class="quiz-grid" id="quiz-grid">
+    <!-- Quiz cards will be dynamically inserted here -->
+   </div>
+  </div>
 
-        // Display quizzes
-        function displayQuizzes(quizzesToDisplay) {
-            quizGrid.innerHTML = '';
-            
-            if (quizzesToDisplay.length === 0) {
-                quizGrid.innerHTML = `
+  <script>
+   // Sample quiz data
+   const quizzes = [
+    {
+     quizname: "My Group Quiz",
+     course: "Chemistry",
+     author: "Prof John",
+     id: "r2746476gd",
+     first_question: "What is the atomic number of Carbon?",
+     modified: "2023-10-15"
+    },
+    {
+     quizname: "Physics Fundamentals",
+     course: "Physics",
+     author: "Dr. Smith",
+     id: "p8364920hd",
+     first_question: "What is Newton's First Law of Motion?",
+     modified: "2023-09-22"
+    },
+    {
+     quizname: "Cell Biology Quiz",
+     course: "Biology",
+     author: "Prof. Johnson",
+     id: "b5283746ks",
+     first_question: "What is the function of mitochondria?",
+     modified: "2023-11-05"
+    },
+    {
+     quizname: "Algebra Test",
+     course: "Mathematics",
+     author: "Dr. Williams",
+     id: "m9274635ls",
+     first_question: "Solve for x: 2x + 5 = 15",
+     modified: "2023-08-30"
+    },
+    {
+     quizname: "Organic Chemistry",
+     course: "Chemistry",
+     author: "Prof. Davis",
+     id: "c6382917md",
+     first_question: "What is the molecular formula of benzene?",
+     modified: "2023-10-28"
+    },
+    {
+     quizname: "Thermodynamics",
+     course: "Physics",
+     author: "Dr. Anderson",
+     id: "p4728193nd",
+     first_question: "Define the First Law of Thermodynamics",
+     modified: "2023-09-10"
+    }
+   ];
+
+   // DOM elements
+   const quizGrid = document.getElementById("quiz-grid");
+   const searchInput = document.getElementById("search-input");
+   const searchBtn = document.getElementById("search-btn");
+   const sortSelect = document.getElementById("sort-select");
+   const quizCount = document.getElementById("quiz-count");
+   const filterRadios = document.querySelectorAll(
+    'input[name="search-filter"]'
+   );
+
+   // Current search filter
+   let currentFilter = "all";
+
+   // Display quizzes
+   function displayQuizzes(quizzesToDisplay) {
+    quizGrid.innerHTML = "";
+
+    if (quizzesToDisplay.length === 0) {
+     quizGrid.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-search"></i>
                         <h3>No quizzes found</h3>
                         <p>Try adjusting your search criteria or try a different filter</p>
                     </div>
                 `;
-                return;
-            }
-            
-            quizzesToDisplay.forEach(quiz => {
-                const quizCard = document.createElement('div');
-                quizCard.className = 'quiz-card';
-                
-                quizCard.innerHTML = `
+     return;
+    }
+
+    quizzesToDisplay.forEach(quiz => {
+     const quizCard = document.createElement("div");
+     quizCard.className = "quiz-card";
+
+     quizCard.innerHTML = `
                     <div class="quiz-header">
                         <div>
                             <h3 class="quiz-title">${quiz.quizname}</h3>
@@ -640,111 +672,115 @@
                         <button class="btn" onclick="takeQuiz('${quiz.id}')"><i class="fas fa-play"></i> Take Quiz</button>
                     </div>
                 `;
-                
-                quizGrid.appendChild(quizCard);
-            });
-            
-            // Update quiz count
-            quizCount.textContent = `Showing ${quizzesToDisplay.length} ${quizzesToDisplay.length === 1 ? 'quiz' : 'quizzes'}`;
-        }
 
-        // Update current filter
-        function updateFilter() {
-            filterRadios.forEach(radio => {
-                if (radio.checked) {
-                    currentFilter = radio.value;
-                }
-            });
-            searchQuizzes();
-        }
+     quizGrid.appendChild(quizCard);
+    });
 
-        // Search functionality
-        function searchQuizzes() {
-            const searchTerm = searchInput.value.toLowerCase().trim();
-            
-            if (searchTerm === '') {
-                // If search is empty, show all quizzes
-                const sortedQuizzes = sortQuizzes([...quizzes]);
-                displayQuizzes(sortedQuizzes);
-                return;
-            }
-            
-            let filteredQuizzes = quizzes.filter(quiz => {
-                switch(currentFilter) {
-                    case 'author':
-                        return quiz.author.toLowerCase().includes(searchTerm);
-                    case 'name':
-                        return quiz.quizname.toLowerCase().includes(searchTerm);
-                    case 'course':
-                        return quiz.course.toLowerCase().includes(searchTerm);
-                    case 'question':
-                        return quiz.first_question.toLowerCase().includes(searchTerm);
-                    case 'all':
-                    default:
-                        return (
-                            quiz.author.toLowerCase().includes(searchTerm) ||
-                            quiz.quizname.toLowerCase().includes(searchTerm) ||
-                            quiz.course.toLowerCase().includes(searchTerm) ||
-                            quiz.first_question.toLowerCase().includes(searchTerm)
-                        );
-                }
-            });
-            
-            // Sort the filtered results
-            const sortedQuizzes = sortQuizzes(filteredQuizzes);
-            displayQuizzes(sortedQuizzes);
-        }
+    // Update quiz count
+    quizCount.textContent = `Showing ${quizzesToDisplay.length} ${
+     quizzesToDisplay.length === 1 ? "quiz" : "quizzes"
+    }`;
+   }
 
-        // Sort quizzes
-        function sortQuizzes(quizzesToSort) {
-            const sortBy = sortSelect.value;
-            
-            return [...quizzesToSort].sort((a, b) => {
-                switch(sortBy) {
-                    case 'newest':
-                        return new Date(b.modified) - new Date(a.modified);
-                    case 'oldest':
-                        return new Date(a.modified) - new Date(b.modified);
-                    case 'name':
-                        return a.quizname.localeCompare(b.quizname);
-                    case 'course':
-                        return a.course.localeCompare(b.course);
-                    default:
-                        return 0;
-                }
-            });
-        }
+   // Update current filter
+   function updateFilter() {
+    filterRadios.forEach(radio => {
+     if (radio.checked) {
+      currentFilter = radio.value;
+     }
+    });
+    searchQuizzes();
+   }
 
-        // Take quiz function
-        function takeQuiz(quizId) {
-            alert(`Starting quiz with ID: ${quizId}\n\nThis would navigate to the quiz taking interface.`);
-            // In a real application, this would redirect to the quiz taking page
-            // window.location.href = `take-quiz.html?id=${quizId}`;
-        }
+   // Search functionality
+   function searchQuizzes() {
+    const searchTerm = searchInput.value.toLowerCase().trim();
 
-        // Event listeners
-        searchBtn.addEventListener('click', searchQuizzes);
-        searchInput.addEventListener('keyup', function(e) {
-            if (e.key === 'Enter') {
-                searchQuizzes();
-            }
-        });
+    if (searchTerm === "") {
+     // If search is empty, show all quizzes
+     const sortedQuizzes = sortQuizzes([...quizzes]);
+     displayQuizzes(sortedQuizzes);
+     return;
+    }
 
-        searchInput.addEventListener('input', function() {
-            // Real-time search as user types
-            searchQuizzes();
-        });
+    let filteredQuizzes = quizzes.filter(quiz => {
+     switch (currentFilter) {
+      case "author":
+       return quiz.author.toLowerCase().includes(searchTerm);
+      case "name":
+       return quiz.quizname.toLowerCase().includes(searchTerm);
+      case "course":
+       return quiz.course.toLowerCase().includes(searchTerm);
+      case "question":
+       return quiz.first_question.toLowerCase().includes(searchTerm);
+      case "all":
+      default:
+       return (
+        quiz.author.toLowerCase().includes(searchTerm) ||
+        quiz.quizname.toLowerCase().includes(searchTerm) ||
+        quiz.course.toLowerCase().includes(searchTerm) ||
+        quiz.first_question.toLowerCase().includes(searchTerm)
+       );
+     }
+    });
 
-        sortSelect.addEventListener('change', searchQuizzes);
+    // Sort the filtered results
+    const sortedQuizzes = sortQuizzes(filteredQuizzes);
+    displayQuizzes(sortedQuizzes);
+   }
 
-        // Filter radio change handlers
-        filterRadios.forEach(radio => {
-            radio.addEventListener('change', updateFilter);
-        });
+   // Sort quizzes
+   function sortQuizzes(quizzesToSort) {
+    const sortBy = sortSelect.value;
 
-        // Initialize the page
-        const sortedQuizzes = sortQuizzes([...quizzes]);
-        displayQuizzes(sortedQuizzes);
-    </script>
-</body>
+    return [...quizzesToSort].sort((a, b) => {
+     switch (sortBy) {
+      case "newest":
+       return new Date(b.modified) - new Date(a.modified);
+      case "oldest":
+       return new Date(a.modified) - new Date(b.modified);
+      case "name":
+       return a.quizname.localeCompare(b.quizname);
+      case "course":
+       return a.course.localeCompare(b.course);
+      default:
+       return 0;
+     }
+    });
+   }
+
+   // Take quiz function
+   function takeQuiz(quizId) {
+    alert(
+     `Starting quiz with ID: ${quizId}\n\nThis would navigate to the quiz taking interface.`
+    );
+    // In a real application, this would redirect to the quiz taking page
+    // window.location.href = `take-quiz.html?id=${quizId}`;
+   }
+
+   // Event listeners
+   searchBtn.addEventListener("click", searchQuizzes);
+   searchInput.addEventListener("keyup", function (e) {
+    if (e.key === "Enter") {
+     searchQuizzes();
+    }
+   });
+
+   searchInput.addEventListener("input", function () {
+    // Real-time search as user types
+    searchQuizzes();
+   });
+
+   sortSelect.addEventListener("change", searchQuizzes);
+
+   // Filter radio change handlers
+   filterRadios.forEach(radio => {
+    radio.addEventListener("change", updateFilter);
+   });
+
+   // Initialize the page
+   const sortedQuizzes = sortQuizzes([...quizzes]);
+   displayQuizzes(sortedQuizzes);
+  </script>
+ </body>
 </html>
