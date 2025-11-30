@@ -1455,8 +1455,7 @@
         });
 
         // Add topic to question
-        document
-            .getElementById("add-question-topic")
+        document.getElementById("add-question-topic")
             .addEventListener("click", function () {
                 const topicInput = document.getElementById("question-topic-input");
                 const topic = topicInput.value.trim();
@@ -1859,7 +1858,7 @@
                     <div class="element-header">
                         <span class="element-type">Quiz Info</span>
                         <div class="element-actions">
-                            <button class="btn btn-outline" onclick="editQuizInfo()"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-outline""><i class="fas fa-edit"></i></button>
                         </div>
                     </div>
                     <div class="element-content">${quizInfo.quiz_name} - ${quizInfo.course} - ${quizInfo.time} minutes</div>
@@ -2115,12 +2114,12 @@
 
             // Optionally, display the JSON in the preview area
             /*
+            */
             previewContent.innerHTML = `<pre style="background: #f5f5f5; padding: 15px; border-radius: var(--border-radius); overflow: auto;">${JSON.stringify(
                 quizData,
                 null,
                 2
             )}</pre>`;
-            */
         });
 
         // Initialize the UI

@@ -1,3 +1,5 @@
+console.log(window.location.href)
+
 //Pro user function
 let signUrl = 'https://projectpq.name.ng/pro'; //signInPage
 
@@ -219,17 +221,17 @@ async function getPQ() {
  
  loadingFunc.start();
  try {
+  /*dev  
   if (!localStorage.getItem('thePaper')) {
    //No Course saved. Redirect to select course.
    return myAlert('follow', 'Please select a course and any session', () => window.location.href = "../");
   }
-  /*dev  
-    let response = await fetch('./pq.json');
-    thePaper = await response.json();
-    thePaper = thePaper.pq;
   */
+    let response = await fetch('./view.json');
+    thePaper = await response.json();
+    //thePaper = thePaper.pq;
   //extra the past question
-  thePaper = JSON.parse(localStorage.getItem('thePaper')); //Store the user 
+  //thePaper = JSON.parse(localStorage.getItem('thePaper')); //Store the user 
   //Display the past question
   await pqRender.start(thePaper);
   //update the user object.
@@ -355,7 +357,7 @@ const pqRender = {
   //get the topics array
   Topics = line.Topics;
   //Create the exam title 
-  let Title = `<h2 id='courseTitle'>${line.code} (${line.session})</h2>`;
+  let Title = `<h2 id='courseTitle'>${line.quiz_name})</h2>`;
   let Container = document.createElement('div');
   Container.id = 'paperTitle';
   //add the exam title to the DOM
@@ -379,8 +381,9 @@ const pqRender = {
    `<p>  <b class='Question_Title'> ${line.name} </b> : ${line.Question.content}</p>`;
   
   //Objective options
-  if (line.Question.type === 'OBJ') {
+  if (line.Question.type === 'OBJ' ||line.Question.type === 'multiple-choice') {
    //Options container 
+   
    let options = document.createElement('div');
    options.className = 'options';
    let quizOptions = document.createElement('div');
@@ -390,7 +393,18 @@ const pqRender = {
    for (let i = 0; i < line.Question.options.length; i++) {
     /*Question Options*/
     let oneOption = document.createElement('span');
-    oneOption.innerHTML = `${L[i]}. ${line.Question.options[i]}`;
+    if(line.Question.options[i].type==="img"){
+    	
+    	
+  
+    	
+    	
+    oneOption.innerHTML = `${L[i]}. <img class = 'imgAns thumbnail' src ='${line.Question.options[i].content}'  alt ='Description of image'/>`;
+    }else{
+    oneOption.innerText = `${L[i]}. ${line.Question.options[i].content}`;
+    }
+    
+    
     options.appendChild(oneOption);
     
     /*Quiz Options*/
@@ -421,6 +435,44 @@ const pqRender = {
      quizOptionContainer.className = 'correctAnswer anOption';
     }
    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
    //Add options to the questions/quizs container
    question.appendChild(options);
    quizQuestion.appendChild(quizOptions);
@@ -588,7 +640,7 @@ const pqRender = {
   //The main heading
   heading.className = 'heading';
   headingContainer.className = 'innerheading';
-  headingContainer.innerHTML = line.heading;
+  headingContainer.innerHTML = line.heading || line.content;
   heading.appendChild(headingContainer);
   //if there is subheading
   if (line.Subheading) {
@@ -616,7 +668,7 @@ function showAllAns() {
 
 let url = `https://procourses-v3yo.onrender.com/procourses/${API_key}`;
 //getPQ(`${url}/paper/${PastCourse}/${PastYear}`)
-await getPQ('./pq.jon');
+await getPQ('./view.json');
 
 
 function randomItems(original, amount, shuffle) {
