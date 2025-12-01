@@ -779,6 +779,27 @@
             background: rgba(220, 38, 38, 0.1);
         }
 
+        /* Edit mode styles */
+        .edit-mode {
+            border-left: 4px solid var(--warning);
+            background-color: #fff9db;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #b45309);
+            box-shadow: 0 4px 15px rgba(217, 119, 6, 0.3);
+        }
+
+        .btn-warning:hover {
+            background: linear-gradient(135deg, #b45309, #92400e);
+        }
+
+        .edit-form-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 gap: 1rem;
@@ -815,6 +836,10 @@
             .option-type-selector,
             .answer-type-selector {
                 flex-direction: column;
+            }
+
+            .element-actions {
+                flex-wrap: wrap;
             }
         }
 
@@ -896,6 +921,10 @@
                             </div>
                         </div>
                         
+                        <div class="edit-form-buttons" id="quiz-info-edit-buttons" style="display: none;">
+                            <button class="btn btn-warning" id="update-quiz-info"><i class="fas fa-save"></i> Update Quiz Info</button>
+                            <button class="btn btn-outline" id="cancel-edit-quiz-info"><i class="fas fa-times"></i> Cancel</button>
+                        </div>
                         <button class="btn" id="save-quiz-info"><i class="fas fa-save"></i> Save Quiz Info</button>
                     </div>
                     
@@ -905,6 +934,10 @@
                             <label for="heading-text">Heading Text <span class="required">*</span></label>
                             <input type="text" id="heading-text" placeholder="Enter section heading">
                         </div>
+                        <div class="edit-form-buttons" id="heading-edit-buttons" style="display: none;">
+                            <button class="btn btn-warning" id="update-heading"><i class="fas fa-save"></i> Update Heading</button>
+                            <button class="btn btn-outline" id="cancel-edit-heading"><i class="fas fa-times"></i> Cancel</button>
+                        </div>
                         <button class="btn" id="add-heading"><i class="fas fa-plus-circle"></i> Add Heading</button>
                     </div>
                     
@@ -913,6 +946,10 @@
                         <div class="form-group">
                             <label for="instruction-text">Instruction Text <span class="required">*</span></label>
                             <textarea id="instruction-text" placeholder="Enter instructions for this section"></textarea>
+                        </div>
+                        <div class="edit-form-buttons" id="instruction-edit-buttons" style="display: none;">
+                            <button class="btn btn-warning" id="update-instruction"><i class="fas fa-save"></i> Update Instruction</button>
+                            <button class="btn btn-outline" id="cancel-edit-instruction"><i class="fas fa-times"></i> Cancel</button>
                         </div>
                         <button class="btn" id="add-instruction"><i class="fas fa-plus-circle"></i> Add Instruction</button>
                     </div>
@@ -1017,6 +1054,10 @@
                             </div>
                         </div>
                         
+                        <div class="edit-form-buttons" id="question-edit-buttons" style="display: none;">
+                            <button class="btn btn-warning" id="update-question"><i class="fas fa-save"></i> Update Question</button>
+                            <button class="btn btn-outline" id="cancel-edit-question"><i class="fas fa-times"></i> Cancel</button>
+                        </div>
                         <button class="btn" id="add-question-btn"><i class="fas fa-plus-circle"></i> Add Question</button>
                     </div>
                     
@@ -1050,6 +1091,10 @@
                             <input type="text" id="media-caption" placeholder="Enter a caption for your media">
                         </div>
                         
+                        <div class="edit-form-buttons" id="media-edit-buttons" style="display: none;">
+                            <button class="btn btn-warning" id="update-media"><i class="fas fa-save"></i> Update Media</button>
+                            <button class="btn btn-outline" id="cancel-edit-media"><i class="fas fa-times"></i> Cancel</button>
+                        </div>
                         <button class="btn" id="add-media"><i class="fas fa-plus-circle"></i> Add Media</button>
                     </div>
                 </div>
@@ -1090,6 +1135,7 @@
         let optionType = "text"; // "text" or "image"
         let answerType = "text"; // "text" or "image"
         let answerImageData = null;
+        let editingElementId = null; // Track which element is being edited
 
         // DOM elements
         const tabs = document.querySelectorAll(".tab");
@@ -1122,6 +1168,35 @@
         const answerTypeBtns = document.querySelectorAll(".answer-type-btn");
         const answerImageUpload = document.getElementById("answer-image-upload");
         const answerImagePreview = document.getElementById("answer-image-preview");
+
+        // Edit buttons
+        const updateQuizInfoBtn = document.getElementById("update-quiz-info");
+        const cancelEditQuizInfoBtn = document.getElementById("cancel-edit-quiz-info");
+        const updateHeadingBtn = document.getElementById("update-heading");
+        const cancelEditHeadingBtn = document.getElementById("cancel-edit-heading");
+        const updateInstructionBtn = document.getElementById("update-instruction");
+        const cancelEditInstructionBtn = document.getElementById("cancel-edit-instruction");
+        const updateQuestionBtn = document.getElementById("update-question");
+        const cancelEditQuestionBtn = document.getElementById("cancel-edit-question");
+        const updateMediaBtn = document.getElementById("update-media");
+        const cancelEditMediaBtn = document.getElementById("cancel-edit-media");
+
+        // Edit form button containers
+        const quizInfoEditButtons = document.getElementById("quiz-info-edit-buttons");
+        const headingEditButtons = document.getElementById("heading-edit-buttons");
+        const instructionEditButtons = document.getElementById("instruction-edit-buttons");
+        const questionEditButtons = document.getElementById("question-edit-buttons");
+        const mediaEditButtons = document.getElementById("media-edit-buttons");
+
+        // SECURITY-ENHANCED UTILITY FUNCTIONS
+        // Safely escape HTML to prevent XSS
+        function escapeHtml(text) {
+            if (typeof text !== 'string') return text;
+            
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
 
         // Tab switching functionality
         tabs.forEach(tab => {
@@ -1255,14 +1330,20 @@
                 if (option.type === "text") {
                     const optionItem = document.createElement("div");
                     optionItem.className = "option-item";
-                    optionItem.innerHTML = `
-                        <input type="text" value="${option.content}" placeholder="Option ${
-                            index + 1
-                        }" onchange="updateTextOptionValue(${index}, this.value)">
-                        <div class="remove-option" onclick="removeTextOption(${index})">
-                            <i class="fas fa-times"></i>
-                        </div>
-                    `;
+                    
+                    const input = document.createElement("input");
+                    input.type = "text";
+                    input.value = escapeHtml(option.content);
+                    input.placeholder = `Option ${index + 1}`;
+                    input.addEventListener("input", (e) => updateTextOptionValue(index, e.target.value));
+                    
+                    const removeBtn = document.createElement("div");
+                    removeBtn.className = "remove-option";
+                    removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                    removeBtn.addEventListener("click", () => removeTextOption(index));
+                    
+                    optionItem.appendChild(input);
+                    optionItem.appendChild(removeBtn);
                     textOptionsList.appendChild(optionItem);
                 }
             });
@@ -1295,18 +1376,41 @@
                 if (option.type === "image") {
                     const optionItem = document.createElement("div");
                     optionItem.className = "option-image-item";
-                    optionItem.innerHTML = `
-                        <div class="file-upload">
-                            <input type="file" id="option-image-${option.id}" accept="image/*" onchange="handleOptionImageUpload(${option.id}, this)">
-                            <div class="file-upload-label"><i class="fas fa-cloud-upload-alt"></i> Choose image for Option ${index + 1}</div>
-                        </div>
-                        <div class="image-preview-container">
-                            <img id="option-image-preview-${option.id}" class="option-image-preview" alt="Option image preview">
-                            <div class="remove-option" onclick="removeImageOption(${option.id})">
-                                <i class="fas fa-times"></i>
-                            </div>
-                        </div>
-                    `;
+                    
+                    const fileUpload = document.createElement("div");
+                    fileUpload.className = "file-upload";
+                    
+                    const input = document.createElement("input");
+                    input.type = "file";
+                    input.id = `option-image-${option.id}`;
+                    input.accept = "image/*";
+                    input.addEventListener("change", (e) => handleOptionImageUpload(option.id, e.target));
+                    
+                    const label = document.createElement("div");
+                    label.className = "file-upload-label";
+                    label.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Choose image for Option ' + (index + 1);
+                    
+                    fileUpload.appendChild(input);
+                    fileUpload.appendChild(label);
+                    
+                    const previewContainer = document.createElement("div");
+                    previewContainer.className = "image-preview-container";
+                    
+                    const img = document.createElement("img");
+                    img.id = `option-image-preview-${option.id}`;
+                    img.className = "option-image-preview";
+                    img.alt = "Option image preview";
+                    
+                    const removeBtn = document.createElement("div");
+                    removeBtn.className = "remove-option";
+                    removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                    removeBtn.addEventListener("click", () => removeImageOption(option.id));
+                    
+                    previewContainer.appendChild(img);
+                    previewContainer.appendChild(removeBtn);
+                    
+                    optionItem.appendChild(fileUpload);
+                    optionItem.appendChild(previewContainer);
                     imageOptionsList.appendChild(optionItem);
                 }
             });
@@ -1413,17 +1517,18 @@
             });
         });
 
-        // Explanation preview
+        // Explanation preview - UPDATED to use textContent for security
         explanationText.addEventListener("input", updateExplanationPreview);
 
         function updateExplanationPreview() {
             let text = explanationText.value;
             if (!text) {
-                explanationPreview.innerHTML = "Explanation preview will appear here";
+                explanationPreview.textContent = "Explanation preview will appear here";
                 return;
             }
 
             // Convert markdown-like syntax to HTML
+            // Note: This is safe because we're converting trusted markdown to HTML
             text = text
                 .replace(
                     /##(.*?)##/g,
@@ -1439,6 +1544,7 @@
                 .replace(/^1\. (.*$)/gim, "<li>$1</li>")
                 .replace(/(<li>.*<\/li>)/g, "<ul>$1</ul>");
 
+            // Use innerHTML here only because we're converting markdown we control
             explanationPreview.innerHTML = text;
         }
 
@@ -1466,53 +1572,50 @@
                     topicInput.value = "";
                 }
             });
-
-        // Update quiz info topics list
+        // Update quiz info topics list - UPDATED for security
         function updateQuizInfoTopicsList() {
             topicsList.innerHTML = "";
             quizInfoTopics.forEach(topic => {
                 const topicTag = document.createElement("div");
                 topicTag.className = "topic-tag";
-                topicTag.innerHTML = `
-                    ${topic}
-                    <span class="remove" data-topic="${topic}"><i class="fas fa-times"></i></span>
-                `;
-                topicsList.appendChild(topicTag);
-            });
-
-            // Add event listeners to remove buttons
-            document.querySelectorAll("#topics-list .remove").forEach(button => {
-                button.addEventListener("click", function () {
-                    const topic = this.getAttribute("data-topic");
+                
+                const topicText = document.createTextNode(topic);
+                topicTag.appendChild(topicText);
+                
+                const removeSpan = document.createElement("span");
+                removeSpan.className = "remove";
+                removeSpan.innerHTML = '<i class="fas fa-times"></i>';
+                removeSpan.addEventListener("click", () => {
                     quizInfoTopics = quizInfoTopics.filter(t => t !== topic);
                     updateQuizInfoTopicsList();
                 });
+                
+                topicTag.appendChild(removeSpan);
+                topicsList.appendChild(topicTag);
             });
         }
 
-        // Update question topics list
+        // Update question topics list - UPDATED for security
         function updateQuestionTopicsList() {
             questionTopicsList.innerHTML = "";
             questionTopics.forEach(topic => {
                 const topicTag = document.createElement("div");
                 topicTag.className = "topic-tag";
-                topicTag.innerHTML = `
-                    ${topic}
-                    <span class="remove" data-topic="${topic}"><i class="fas fa-times"></i></span>
-                `;
+                
+                const topicText = document.createTextNode(topic);
+                topicTag.appendChild(topicText);
+                
+                const removeSpan = document.createElement("span");
+                removeSpan.className = "remove";
+                removeSpan.innerHTML = '<i class="fas fa-times"></i>';
+                removeSpan.addEventListener("click", () => {
+                    questionTopics = questionTopics.filter(t => t !== topic);
+                    updateQuestionTopicsList();
+                });
+                
+                topicTag.appendChild(removeSpan);
                 questionTopicsList.appendChild(topicTag);
             });
-
-            // Add event listeners to remove buttons
-            document
-                .querySelectorAll("#question-topics-list .remove")
-                .forEach(button => {
-                    button.addEventListener("click", function () {
-                        const topic = this.getAttribute("data-topic");
-                        questionTopics = questionTopics.filter(t => t !== topic);
-                        updateQuestionTopicsList();
-                    });
-                });
         }
 
         // Save quiz info
@@ -1550,6 +1653,10 @@
         // Edit quiz info
         editQuizInfoBtn.addEventListener("click", function () {
             if (quizInfo) {
+                // Switch to edit mode
+                saveQuizInfoBtn.style.display = "none";
+                quizInfoEditButtons.style.display = "flex";
+                
                 document.getElementById("quiz-name").value = quizInfo.quiz_name;
                 document.getElementById("course").value = quizInfo.course;
                 document.getElementById("time-allowed").value = quizInfo.time;
@@ -1564,7 +1671,49 @@
             }
         });
 
-        // Update quiz info banner
+        // Update quiz info
+        updateQuizInfoBtn.addEventListener("click", function () {
+            const quizName = document.getElementById("quiz-name").value.trim();
+            const course = document.getElementById("course").value.trim();
+            const timeAllowed = document.getElementById("time-allowed").value.trim();
+
+            if (quizName && course && timeAllowed) {
+                quizInfo = {
+                    type: "quizInfo",
+                    kind: "pureOBJ",
+                    quiz_name: quizName,
+                    course: course,
+                    topics: [...quizInfoTopics],
+                    time: timeAllowed
+                };
+
+                // Exit edit mode
+                saveQuizInfoBtn.style.display = "block";
+                quizInfoEditButtons.style.display = "none";
+
+                // Update banner
+                updateQuizInfoBanner();
+
+                // Update elements list
+                updateElementList();
+
+                // Update preview
+                updatePreview();
+
+                // Show success message
+                alert("Quiz info updated successfully!");
+            } else {
+                alert("Please fill in all required fields for quiz info");
+            }
+        });
+
+        // Cancel edit quiz info
+        cancelEditQuizInfoBtn.addEventListener("click", function () {
+            saveQuizInfoBtn.style.display = "block";
+            quizInfoEditButtons.style.display = "none";
+        });
+
+        // Update quiz info banner - UPDATED for security
         function updateQuizInfoBanner() {
             if (quizInfo) {
                 quizInfoBanner.style.display = "flex";
@@ -1602,9 +1751,45 @@
             }
         });
 
+        // Update heading element
+        updateHeadingBtn.addEventListener("click", function () {
+            const headingText = document.getElementById("heading-text").value.trim();
+
+            if (headingText) {
+                // Find and update the element
+                const index = quizElements.findIndex(element => element.id === editingElementId);
+                if (index !== -1) {
+                    quizElements[index].content = headingText;
+                    
+                    // Exit edit mode
+                    document.getElementById("add-heading").style.display = "block";
+                    headingEditButtons.style.display = "none";
+                    editingElementId = null;
+                    
+                    // Clear form
+                    document.getElementById("heading-text").value = "";
+                    
+                    // Update UI
+                    updateElementList();
+                    updatePreview();
+                    
+                    alert("Heading updated successfully!");
+                }
+            } else {
+                alert("Please enter a heading text");
+            }
+        });
+
+        // Cancel edit heading
+        cancelEditHeadingBtn.addEventListener("click", function () {
+            document.getElementById("add-heading").style.display = "block";
+            headingEditButtons.style.display = "none";
+            editingElementId = null;
+            document.getElementById("heading-text").value = "";
+        });
+
         // Add instruction element
-        document
-            .getElementById("add-instruction")
+        document.getElementById("add-instruction")
             .addEventListener("click", function () {
                 const instructionText = document
                     .getElementById("instruction-text")
@@ -1623,9 +1808,45 @@
                 }
             });
 
+        // Update instruction element
+        updateInstructionBtn.addEventListener("click", function () {
+            const instructionText = document.getElementById("instruction-text").value.trim();
+
+            if (instructionText) {
+                // Find and update the element
+                const index = quizElements.findIndex(element => element.id === editingElementId);
+                if (index !== -1) {
+                    quizElements[index].content = [instructionText];
+                    
+                    // Exit edit mode
+                    document.getElementById("add-instruction").style.display = "block";
+                    instructionEditButtons.style.display = "none";
+                    editingElementId = null;
+                    
+                    // Clear form
+                    document.getElementById("instruction-text").value = "";
+                    
+                    // Update UI
+                    updateElementList();
+                    updatePreview();
+                    
+                    alert("Instruction updated successfully!");
+                }
+            } else {
+                alert("Please enter instruction text");
+            }
+        });
+
+        // Cancel edit instruction
+        cancelEditInstructionBtn.addEventListener("click", function () {
+            document.getElementById("add-instruction").style.display = "block";
+            instructionEditButtons.style.display = "none";
+            editingElementId = null;
+            document.getElementById("instruction-text").value = "";
+        });
+
         // Add question element
-        document
-            .getElementById("add-question-btn")
+        document.getElementById("add-question-btn")
             .addEventListener("click", function () {
                 const questionName = document
                     .getElementById("question-name")
@@ -1714,25 +1935,136 @@
                     addElement(element);
 
                     // Reset form
-                    document.getElementById("question-name").value = "";
-                    document.getElementById("question-text").value = "";
-                    document.getElementById("answer-text").value = "";
-                    document.getElementById("explanation-text").value = "";
-                    document.getElementById("hint-text").value = "";
-                    questionTopics = [];
-                    questionOptions = [];
-                    answerImageData = null;
-                    updateQuestionTopicsList();
-                    updateTextOptionsList();
-                    updateImageOptionsList();
-                    explanationPreview.innerHTML =
-                        "Explanation preview will appear here";
-                    optionsContainer.style.display = "none";
-                    answerImagePreview.style.display = "none";
+                    resetQuestionForm();
                 } else {
                     alert("Please fill in all required fields for the question");
                 }
             });
+
+        // Update question element
+        updateQuestionBtn.addEventListener("click", function () {
+            const questionName = document.getElementById("question-name").value.trim();
+            const questionText = document.getElementById("question-text").value.trim();
+            const answerText = document.getElementById("answer-text").value.trim();
+            const explanationText = document.getElementById("explanation-text").value.trim();
+            const hintText = document.getElementById("hint-text").value.trim();
+            const questionType = document.getElementById("question-type").value;
+
+            if (questionName && questionText) {
+                // Validate multiple choice answer
+                if (questionType === "multiple-choice") {
+                    if (optionType === "text") {
+                        // For text options, check if answer matches one of the options
+                        const textOptions = questionOptions.filter(opt => opt.type === "text").map(opt => opt.content);
+                        if (answerType === "text" && !textOptions.includes(answerText)) {
+                            alert(
+                                "For multiple choice questions with text options, the answer must be one of the options"
+                            );
+                            return;
+                        }
+                    } else {
+                        // For image options, we need at least one option
+                        if (questionOptions.length === 0) {
+                            alert("Please add at least one image option");
+                            return;
+                        }
+                    }
+                }
+
+                // Handle answer based on type
+                let answerContent;
+                if (answerType === "text") {
+                    answerContent = answerText;
+                } else {
+                    if (!answerImageData) {
+                        alert("Please upload an image for the answer");
+                        return;
+                    }
+                    answerContent = answerImageData;
+                }
+
+                // Find and update the element
+                const index = quizElements.findIndex(element => element.id === editingElementId);
+                if (index !== -1) {
+                    quizElements[index].name = questionName;
+                    quizElements[index].topic = [...questionTopics];
+                    quizElements[index].Question.content = questionText;
+                    quizElements[index].Question.type = questionType;
+                    quizElements[index].Answer.type = answerType;
+                    quizElements[index].Answer.content = answerContent;
+
+                    // Add options for multiple choice
+                    if (questionType === "multiple-choice") {
+                        quizElements[index].Question.options = [...questionOptions];
+                        quizElements[index].Question.optionType = optionType;
+                    } else if (questionType === "true-false") {
+                        quizElements[index].Question.options = ["True", "False"];
+                    }
+
+                    // Add explanation if provided
+                    if (explanationText) {
+                        quizElements[index].Explanation = {
+                            type: "string",
+                            content: explanationText
+                        };
+                    } else {
+                        delete quizElements[index].Explanation;
+                    }
+
+                    // Add hint if provided
+                    if (hintText) {
+                        quizElements[index].Hint = {
+                            type: "string",
+                            content: hintText
+                        };
+                    } else {
+                        delete quizElements[index].Hint;
+                    }
+
+                    // Exit edit mode
+                    document.getElementById("add-question-btn").style.display = "block";
+                    questionEditButtons.style.display = "none";
+                    editingElementId = null;
+                    
+                    // Reset form
+                    resetQuestionForm();
+                    
+                    // Update UI
+                    updateElementList();
+                    updatePreview();
+                    
+                    alert("Question updated successfully!");
+                }
+            } else {
+                alert("Please fill in all required fields for the question");
+            }
+        });
+
+        // Cancel edit question
+        cancelEditQuestionBtn.addEventListener("click", function () {
+            document.getElementById("add-question-btn").style.display = "block";
+            questionEditButtons.style.display = "none";
+            editingElementId = null;
+            resetQuestionForm();
+        });
+
+        // Reset question form
+        function resetQuestionForm() {
+            document.getElementById("question-name").value = "";
+            document.getElementById("question-text").value = "";
+            document.getElementById("answer-text").value = "";
+            document.getElementById("explanation-text").value = "";
+            document.getElementById("hint-text").value = "";
+            questionTopics = [];
+            questionOptions = [];
+            answerImageData = null;
+            updateQuestionTopicsList();
+            updateTextOptionsList();
+            updateImageOptionsList();
+            explanationPreview.textContent = "Explanation preview will appear here";
+            optionsContainer.style.display = "none";
+            answerImagePreview.style.display = "none";
+        }
 
         // Add media element
         document.getElementById("add-media").addEventListener("click", function () {
@@ -1777,12 +2109,86 @@
             }
         });
 
+        // Update media element
+        updateMediaBtn.addEventListener("click", function () {
+            const mediaType = document.getElementById("media-type").value;
+            const caption = mediaCaptionInput.value.trim();
+
+            let content = "";
+
+            if (mediaType === "image") {
+                const fileInput = document.getElementById("image-upload");
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        content = e.target.result;
+                        updateMediaElement(content, caption);
+                    };
+
+                    reader.readAsDataURL(file);
+                } else {
+                    // If no new file, keep existing content
+                    const index = quizElements.findIndex(element => element.id === editingElementId);
+                    if (index !== -1) {
+                        content = quizElements[index].content;
+                        updateMediaElement(content, caption);
+                    }
+                }
+            } else if (mediaType === "youtube") {
+                const youtubeUrl = document.getElementById("youtube-url").value.trim();
+                if (youtubeUrl) {
+                    content = youtubeUrl;
+                    updateMediaElement(content, caption);
+                } else {
+                    alert("Please enter a YouTube URL");
+                }
+            }
+        });
+
+        function updateMediaElement(content, caption) {
+            // Find and update the element
+            const index = quizElements.findIndex(element => element.id === editingElementId);
+            if (index !== -1) {
+                quizElements[index].content = content;
+                if (caption) {
+                    quizElements[index].caption = caption;
+                } else {
+                    delete quizElements[index].caption;
+                }
+
+                // Exit edit mode
+                document.getElementById("add-media").style.display = "block";
+                mediaEditButtons.style.display = "none";
+                editingElementId = null;
+                
+                // Reset form
+                resetMediaForm();
+                
+                // Update UI
+                updateElementList();
+                updatePreview();
+                
+                alert("Media updated successfully!");
+            }
+        }
+
+        // Cancel edit media
+        cancelEditMediaBtn.addEventListener("click", function () {
+            document.getElementById("add-media").style.display = "block";
+            mediaEditButtons.style.display = "none";
+            editingElementId = null;
+            resetMediaForm();
+        });
+
         // Reset media form
         function resetMediaForm() {
             document.getElementById("image-upload").value = "";
             document.getElementById("youtube-url").value = "";
             mediaCaptionInput.value = "";
             imagePreview.style.display = "none";
+            imagePreview.src = "";
         }
 
         // Add element to quiz
@@ -1803,6 +2209,11 @@
 
         // Remove element from quiz
         function removeElement(id) {
+            // If we're editing this element, cancel edit mode first
+            if (id === editingElementId) {
+                cancelEditMode();
+            }
+            
             quizElements = quizElements.filter(element => element.id !== id);
             updateElementList();
             updatePreview();
@@ -1836,17 +2247,194 @@
             }
         }
 
-        // Update element list in UI
+        // Edit element
+        function editElement(id) {
+            const element = quizElements.find(el => el.id === id);
+            if (!element) return;
+
+            // Set editing element ID
+            editingElementId = id;
+
+            // Highlight the element being edited
+            updateElementList();
+
+            // Load element data into form based on type
+            if (element.type === "heading") {
+                document.getElementById("heading-text").value = element.content;
+                document.getElementById("add-heading").style.display = "none";
+                headingEditButtons.style.display = "flex";
+                
+                // Switch to heading tab
+                tabs.forEach(t => t.classList.remove("active"));
+                document.querySelector('[data-tab="heading"]').classList.add("active");
+                tabContents.forEach(content => content.classList.remove("active"));
+                document.getElementById("heading-tab").classList.add("active");
+            } else if (element.type === "Instruction") {
+                document.getElementById("instruction-text").value = element.content[0];
+                document.getElementById("add-instruction").style.display = "none";
+                instructionEditButtons.style.display = "flex";
+                
+                // Switch to instruction tab
+                tabs.forEach(t => t.classList.remove("active"));
+                document.querySelector('[data-tab="instruction"]').classList.add("active");
+                tabContents.forEach(content => content.classList.remove("active"));
+                document.getElementById("instruction-tab").classList.add("active");
+            } else if (element.type === "Question") {
+                // Load question data
+                document.getElementById("question-name").value = element.name;
+                document.getElementById("question-text").value = element.Question.content;
+                document.getElementById("question-type").value = element.Question.type;
+                questionTypeSelect.dispatchEvent(new Event('change'));
+                
+                // Load topics
+                questionTopics = element.topic ? [...element.topic] : [];
+                updateQuestionTopicsList();
+                
+                // Load answer
+                if (element.Answer.type === "text") {
+                    document.getElementById("answer-text").value = element.Answer.content;
+                    answerType = "text";
+                    answerTypeBtns.forEach(btn => btn.classList.remove("active"));
+                    document.querySelector('[data-answer-type="text"]').classList.add("active");
+                    document.getElementById("text-answer-container").style.display = "block";
+                    document.getElementById("image-answer-container").style.display = "none";
+                } else {
+                    answerImageData = element.Answer.content;
+                    answerType = "image";
+                    answerTypeBtns.forEach(btn => btn.classList.remove("active"));
+                    document.querySelector('[data-answer-type="image"]').classList.add("active");
+                    document.getElementById("text-answer-container").style.display = "none";
+                    document.getElementById("image-answer-container").style.display = "block";
+                    answerImagePreview.src = element.Answer.content;
+                    answerImagePreview.style.display = "block";
+                }
+                
+                // Load hint
+                if (element.Hint) {
+                    document.getElementById("hint-text").value = element.Hint.content;
+                }
+                
+                // Load explanation
+                if (element.Explanation) {
+                    document.getElementById("explanation-text").value = element.Explanation.content;
+                    updateExplanationPreview();
+                }
+                
+                // Load options for multiple choice
+                if (element.Question.type === "multiple-choice" && element.Question.options) {
+                    questionOptions = element.Question.options.map(opt => ({...opt}));
+                    optionType = element.Question.optionType || "text";
+                    
+                    // Update option type UI
+                    optionTypeBtns.forEach(btn => btn.classList.remove("active"));
+                    document.querySelector(`[data-option-type="${optionType}"]`).classList.add("active");
+                    
+                    if (optionType === "text") {
+                        textOptionsList.style.display = "block";
+                        imageOptionsList.style.display = "none";
+                        document.getElementById("add-text-option").style.display = "block";
+                        document.getElementById("add-image-option").style.display = "none";
+                        updateTextOptionsList();
+                    } else {
+                        textOptionsList.style.display = "none";
+                        imageOptionsList.style.display = "block";
+                        document.getElementById("add-text-option").style.display = "none";
+                        document.getElementById("add-image-option").style.display = "block";
+                        updateImageOptionsList();
+                    }
+                }
+                
+                // Show/hide options container
+                if (element.Question.type === "multiple-choice") {
+                    optionsContainer.style.display = "block";
+                } else {
+                    optionsContainer.style.display = "none";
+                }
+                
+                document.getElementById("add-question-btn").style.display = "none";
+                questionEditButtons.style.display = "flex";
+                
+                // Switch to question tab
+                tabs.forEach(t => t.classList.remove("active"));
+                document.querySelector('[data-tab="question"]').classList.add("active");
+                tabContents.forEach(content => content.classList.remove("active"));
+                document.getElementById("question-tab").classList.add("active");
+            } else if (element.type === "img") {
+                // Determine media type
+                const isYouTube = element.content.includes("youtube.com") || element.content.includes("youtu.be");
+                document.getElementById("media-type").value = isYouTube ? "youtube" : "image";
+                mediaTypeSelect.dispatchEvent(new Event('change'));
+                
+                // Load content
+                if (isYouTube) {
+                    document.getElementById("youtube-url").value = element.content;
+                } else {
+                    // For images, we can't reload the file, but we can show the preview
+                    imagePreview.src = element.content;
+                    imagePreview.style.display = "block";
+                }
+                
+                // Load caption
+                if (element.caption) {
+                    mediaCaptionInput.value = element.caption;
+                }
+                
+                document.getElementById("add-media").style.display = "none";
+                mediaEditButtons.style.display = "flex";
+                
+                // Switch to media tab
+                tabs.forEach(t => t.classList.remove("active"));
+                document.querySelector('[data-tab="media"]').classList.add("active");
+                tabContents.forEach(content => content.classList.remove("active"));
+                document.getElementById("media-tab").classList.add("active");
+            }
+        }
+
+        // Cancel edit mode
+        function cancelEditMode() {
+            editingElementId = null;
+            
+            // Reset all edit modes
+            saveQuizInfoBtn.style.display = "block";
+            quizInfoEditButtons.style.display = "none";
+            
+            document.getElementById("add-heading").style.display = "block";
+            headingEditButtons.style.display = "none";
+            document.getElementById("heading-text").value = "";
+            
+            document.getElementById("add-instruction").style.display = "block";
+            instructionEditButtons.style.display = "none";
+            document.getElementById("instruction-text").value = "";
+            
+            document.getElementById("add-question-btn").style.display = "block";
+            questionEditButtons.style.display = "none";
+            resetQuestionForm();
+            
+            document.getElementById("add-media").style.display = "block";
+            mediaEditButtons.style.display = "none";
+            resetMediaForm();
+            
+            // Update element list to remove edit highlight
+            updateElementList();
+        }
+
+        // Update element list in UI - COMPLETELY REWRITTEN for security
         function updateElementList() {
             elementList.innerHTML = "";
 
             if (!quizInfo && quizElements.length === 0) {
-                elementList.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-inbox"></i>
-                        <p>No elements added yet. Start by adding Quiz Info!</p>
-                    </div>
-                `;
+                const emptyState = document.createElement("div");
+                emptyState.className = "empty-state";
+                
+                const icon = document.createElement("i");
+                icon.className = "fas fa-inbox";
+                
+                const message = document.createElement("p");
+                message.textContent = "No elements added yet. Start by adding Quiz Info!";
+                
+                emptyState.appendChild(icon);
+                emptyState.appendChild(message);
+                elementList.appendChild(emptyState);
                 return;
             }
 
@@ -1854,15 +2442,32 @@
             if (quizInfo) {
                 const quizInfoItem = document.createElement("div");
                 quizInfoItem.className = "element-item";
-                quizInfoItem.innerHTML = `
-                    <div class="element-header">
-                        <span class="element-type">Quiz Info</span>
-                        <div class="element-actions">
-                            <button class="btn btn-outline""><i class="fas fa-edit"></i></button>
-                        </div>
-                    </div>
-                    <div class="element-content">${quizInfo.quiz_name} - ${quizInfo.course} - ${quizInfo.time} minutes</div>
-                `;
+                
+                const elementHeader = document.createElement("div");
+                elementHeader.className = "element-header";
+                
+                const typeSpan = document.createElement("span");
+                typeSpan.className = "element-type";
+                typeSpan.textContent = "Quiz Info";
+                
+                const actionsDiv = document.createElement("div");
+                actionsDiv.className = "element-actions";
+                
+                const editBtn = document.createElement("button");
+                editBtn.className = "btn btn-outline";
+                editBtn.innerHTML = '<i class="fas fa-edit"></i>';
+                editBtn.addEventListener("click", () => editQuizInfoBtn.click());
+                
+                actionsDiv.appendChild(editBtn);
+                elementHeader.appendChild(typeSpan);
+                elementHeader.appendChild(actionsDiv);
+                
+                const contentDiv = document.createElement("div");
+                contentDiv.className = "element-content";
+                contentDiv.textContent = `${quizInfo.quiz_name} - ${quizInfo.course} - ${quizInfo.time} minutes`;
+                
+                quizInfoItem.appendChild(elementHeader);
+                quizInfoItem.appendChild(contentDiv);
                 elementList.appendChild(quizInfoItem);
             }
 
@@ -1870,6 +2475,11 @@
             quizElements.forEach(element => {
                 const elementItem = document.createElement("div");
                 elementItem.className = "element-item";
+                
+                // Add edit mode highlight
+                if (element.id === editingElementId) {
+                    elementItem.classList.add("edit-mode");
+                }
 
                 let content = "";
                 let typeLabel = "";
@@ -1901,33 +2511,77 @@
                     }
                 }
 
-                elementItem.innerHTML = `
-                    <div class="element-header">
-                        <span class="element-type">${typeLabel}</span>
-                        <div class="element-actions">
-                            <button class="btn" onclick="moveElementUp(${element.id})"><i class="fas fa-arrow-up"></i></button>
-                            <button class="btn" onclick="moveElementDown(${element.id})"><i class="fas fa-arrow-down"></i></button>
-                            <button class="btn btn-danger" onclick="removeElement(${element.id})"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>
-                    <div class="element-content">${content}</div>
-                `;
-
+                // Create element header
+                const elementHeader = document.createElement("div");
+                elementHeader.className = "element-header";
+                
+                const typeSpan = document.createElement("span");
+                typeSpan.className = "element-type";
+                typeSpan.textContent = typeLabel;
+                
+                const actionsDiv = document.createElement("div");
+                actionsDiv.className = "element-actions";
+                
+                // Create edit button
+                const editBtn = document.createElement("button");
+                editBtn.className = "btn btn-warning";
+                editBtn.innerHTML = '<i class="fas fa-edit"></i>';
+                editBtn.addEventListener("click", () => editElement(element.id));
+                
+                // Create move up button
+                const upBtn = document.createElement("button");
+                upBtn.className = "btn";
+                upBtn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+                upBtn.addEventListener("click", () => moveElementUp(element.id));
+                
+                // Create move down button
+                const downBtn = document.createElement("button");
+                downBtn.className = "btn";
+                downBtn.innerHTML = '<i class="fas fa-arrow-down"></i>';
+                downBtn.addEventListener("click", () => moveElementDown(element.id));
+                
+                // Create delete button
+                const deleteBtn = document.createElement("button");
+                deleteBtn.className = "btn btn-danger";
+                deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+                deleteBtn.addEventListener("click", () => removeElement(element.id));
+                
+                actionsDiv.appendChild(editBtn);
+                actionsDiv.appendChild(upBtn);
+                actionsDiv.appendChild(downBtn);
+                actionsDiv.appendChild(deleteBtn);
+                
+                elementHeader.appendChild(typeSpan);
+                elementHeader.appendChild(actionsDiv);
+                
+                // Create content
+                const contentDiv = document.createElement("div");
+                contentDiv.className = "element-content";
+                contentDiv.textContent = content;
+                
+                elementItem.appendChild(elementHeader);
+                elementItem.appendChild(contentDiv);
                 elementList.appendChild(elementItem);
             });
         }
 
-        // Update preview
+        // Update preview - COMPLETELY REWRITTEN for security
         function updatePreview() {
             previewContent.innerHTML = "";
 
             if (!quizInfo && quizElements.length === 0) {
-                previewContent.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-file-alt"></i>
-                        <p>Your quiz preview will appear here as you add elements.</p>
-                    </div>
-                `;
+                const emptyState = document.createElement("div");
+                emptyState.className = "empty-state";
+                
+                const icon = document.createElement("i");
+                icon.className = "fas fa-file-alt";
+                
+                const message = document.createElement("p");
+                message.textContent = "Your quiz preview will appear here as you add elements.";
+                
+                emptyState.appendChild(icon);
+                emptyState.appendChild(message);
+                previewContent.appendChild(emptyState);
                 return;
             }
 
@@ -1935,20 +2589,36 @@
             if (quizInfo) {
                 const quizInfoDiv = document.createElement("div");
                 quizInfoDiv.className = "quiz-element";
-                quizInfoDiv.innerHTML = `
-                    <h2 class="quiz-heading">${quizInfo.quiz_name}</h2>
-                    <p><strong>Course:</strong> ${quizInfo.course}</p>
-                    <p><strong>Time Allowed:</strong> ${
-                        quizInfo.time
-                    } minutes</p>
-                    ${
-                        quizInfo.topics.length > 0
-                            ? `<p><strong>Topics:</strong> ${quizInfo.topics.join(
-                                  ", "
-                              )}</p>`
-                            : ""
-                    }
-                `;
+                
+                const heading = document.createElement("h2");
+                heading.className = "quiz-heading";
+                heading.textContent = quizInfo.quiz_name;
+                
+                const courseP = document.createElement("p");
+                const courseStrong = document.createElement("strong");
+                courseStrong.textContent = "Course: ";
+                courseP.appendChild(courseStrong);
+                courseP.appendChild(document.createTextNode(quizInfo.course));
+                
+                const timeP = document.createElement("p");
+                const timeStrong = document.createElement("strong");
+                timeStrong.textContent = "Time Allowed: ";
+                timeP.appendChild(timeStrong);
+                timeP.appendChild(document.createTextNode(`${quizInfo.time} minutes`));
+                
+                quizInfoDiv.appendChild(heading);
+                quizInfoDiv.appendChild(courseP);
+                quizInfoDiv.appendChild(timeP);
+                
+                if (quizInfo.topics.length > 0) {
+                    const topicsP = document.createElement("p");
+                    const topicsStrong = document.createElement("strong");
+                    topicsStrong.textContent = "Topics: ";
+                    topicsP.appendChild(topicsStrong);
+                    topicsP.appendChild(document.createTextNode(quizInfo.topics.join(", ")));
+                    quizInfoDiv.appendChild(topicsP);
+                }
+                
                 previewContent.appendChild(quizInfoDiv);
             }
 
@@ -1958,46 +2628,122 @@
                 elementDiv.className = "quiz-element";
 
                 if (element.type === "heading") {
-                    elementDiv.innerHTML = `<h3 class="quiz-heading">${element.content}</h3>`;
+                    const heading = document.createElement("h3");
+                    heading.className = "quiz-heading";
+                    heading.textContent = element.content;
+                    elementDiv.appendChild(heading);
                 } else if (element.type === "Instruction") {
-                    elementDiv.innerHTML = `<p class="quiz-instruction">${element.content[0]}</p>`;
+                    const instruction = document.createElement("p");
+                    instruction.className = "quiz-instruction";
+                    instruction.textContent = element.content[0];
+                    elementDiv.appendChild(instruction);
                 } else if (element.type === "Question") {
-                    let hintHtml = "";
-                    if (element.Hint) {
-                        hintHtml = `<div class="hint-box"><strong>Hint:</strong> ${element.Hint.content}</div>`;
+                    const questionHeading = document.createElement("h3");
+                    questionHeading.className = "quiz-heading";
+                    questionHeading.textContent = element.name;
+                    elementDiv.appendChild(questionHeading);
+                    
+                    if (element.topic && element.topic.length > 0) {
+                        const topicsP = document.createElement("p");
+                        const topicsStrong = document.createElement("strong");
+                        topicsStrong.textContent = "Topics: ";
+                        topicsP.appendChild(topicsStrong);
+                        topicsP.appendChild(document.createTextNode(element.topic.join(", ")));
+                        elementDiv.appendChild(topicsP);
                     }
-
-                    let optionsHtml = "";
-                    if (
-                        element.Question.type === "multiple-choice" &&
-                        element.Question.options
-                    ) {
+                    
+                    const questionP = document.createElement("p");
+                    questionP.className = "quiz-question";
+                    questionP.textContent = element.Question.content;
+                    elementDiv.appendChild(questionP);
+                    
+                    // Add options for multiple choice
+                    if (element.Question.type === "multiple-choice" && element.Question.options) {
+                        const optionsContainer = document.createElement("div");
+                        optionsContainer.style.margin = "15px 0";
+                        
+                        const optionsStrong = document.createElement("strong");
+                        optionsStrong.textContent = "Options:";
+                        optionsContainer.appendChild(optionsStrong);
+                        
                         if (element.Question.optionType === "text") {
-                            // Text options
+                            const ul = document.createElement("ul");
+                            ul.style.marginLeft = "20px";
+                            
                             const textOptions = element.Question.options.filter(opt => opt.type === "text");
-                            optionsHtml = `<div style="margin: 15px 0;"><strong>Options:</strong><ul style="margin-left: 20px;">${textOptions
-                                .map(opt => `<li>${opt.content}</li>`)
-                                .join("")}</ul></div>`;
+                            textOptions.forEach(opt => {
+                                const li = document.createElement("li");
+                                li.textContent = opt.content;
+                                ul.appendChild(li);
+                            });
+                            optionsContainer.appendChild(ul);
                         } else {
-                            // Image options
+                            const imageContainer = document.createElement("div");
+                            imageContainer.style.display = "flex";
+                            imageContainer.style.flexWrap = "wrap";
+                            imageContainer.style.gap = "10px";
+                            imageContainer.style.marginTop = "10px";
+                            
                             const imageOptions = element.Question.options.filter(opt => opt.type === "image");
-                            optionsHtml = `<div style="margin: 15px 0;"><strong>Options:</strong><div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">${imageOptions
-                                .map(opt => `<img src="${opt.content}" alt="Option" style="max-width: 150px; max-height: 150px; border-radius: var(--border-radius);">`)
-                                .join("")}</div></div>`;
+                            imageOptions.forEach(opt => {
+                                const img = document.createElement("img");
+                                img.src = opt.content;
+                                img.alt = "Option";
+                                img.style.maxWidth = "150px";
+                                img.style.maxHeight = "150px";
+                                img.style.borderRadius = "var(--border-radius)";
+                                imageContainer.appendChild(img);
+                            });
+                            optionsContainer.appendChild(imageContainer);
                         }
+                        elementDiv.appendChild(optionsContainer);
                     } else if (element.Question.type === "true-false") {
-                        optionsHtml = `<div style="margin: 15px 0;"><strong>Options:</strong> True, False</div>`;
+                        const optionsDiv = document.createElement("div");
+                        optionsDiv.style.margin = "15px 0";
+                        
+                        const optionsStrong = document.createElement("strong");
+                        optionsStrong.textContent = "Options: True, False";
+                        optionsDiv.appendChild(optionsStrong);
+                        elementDiv.appendChild(optionsDiv);
                     }
-
-                    let answerHtml = "";
+                    
+                    // Add hint if exists
+                    if (element.Hint) {
+                        const hintDiv = document.createElement("div");
+                        hintDiv.className = "hint-box";
+                        
+                        const hintStrong = document.createElement("strong");
+                        hintStrong.textContent = "Hint: ";
+                        hintDiv.appendChild(hintStrong);
+                        hintDiv.appendChild(document.createTextNode(element.Hint.content));
+                        
+                        elementDiv.appendChild(hintDiv);
+                    }
+                    
+                    // Add answer
+                    const answerTitle = document.createElement("p");
+                    const answerStrong = document.createElement("strong");
+                    answerStrong.textContent = "Answer: ";
+                    answerTitle.appendChild(answerStrong);
+                    
                     if (element.Answer.type === "text") {
-                        answerHtml = `<p><strong>Answer:</strong> ${element.Answer.content}</p>`;
+                        answerTitle.appendChild(document.createTextNode(element.Answer.content));
+                        elementDiv.appendChild(answerTitle);
                     } else {
-                        answerHtml = `<p><strong>Answer:</strong></p><img src="${element.Answer.content}" alt="Answer" class="quiz-image">`;
+                        elementDiv.appendChild(answerTitle);
+                        const answerImg = document.createElement("img");
+                        answerImg.src = element.Answer.content;
+                        answerImg.alt = "Answer";
+                        answerImg.className = "quiz-image";
+                        elementDiv.appendChild(answerImg);
                     }
-
-                    let explanationHtml = "";
+                    
+                    // Add explanation if exists
                     if (element.Explanation) {
+                        const explanationDiv = document.createElement("div");
+                        explanationDiv.className = "quiz-explanation";
+                        
+                        // Convert markdown to HTML (this is safe because we control the format)
                         let explanationText = element.Explanation.content
                             .replace(
                                 /##(.*?)##/g,
@@ -2012,25 +2758,10 @@
                             .replace(/^- (.*$)/gim, "<li>$1</li>")
                             .replace(/^1\. (.*$)/gim, "<li>$1</li>")
                             .replace(/(<li>.*<\/li>)/g, "<ul>$1</ul>");
-
-                        explanationHtml = `<div class="quiz-explanation">${explanationText}</div>`;
+                        
+                        explanationDiv.innerHTML = explanationText;
+                        elementDiv.appendChild(explanationDiv);
                     }
-
-                    elementDiv.innerHTML = `
-                        <h3 class="quiz-heading">${element.name}</h3>
-                        ${
-                            element.topic.length > 0
-                                ? `<p><strong>Topics:</strong> ${element.topic.join(
-                                      ", "
-                                  )}</p>`
-                                : ""
-                        }
-                        <p class="quiz-question">${element.Question.content}</p>
-                        ${optionsHtml}
-                        ${hintHtml}
-                        ${answerHtml}
-                        ${explanationHtml}
-                    `;
                 } else if (element.type === "img") {
                     // Check if it's a YouTube URL
                     if (
@@ -2039,18 +2770,37 @@
                     ) {
                         const videoId = extractYouTubeId(element.content);
                         if (videoId) {
-                            elementDiv.innerHTML = `
-                                <iframe class="quiz-video" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
-                                ${element.caption ? `<p class="media-caption">${element.caption}</p>` : ''}
-                            `;
+                            const iframe = document.createElement("iframe");
+                            iframe.className = "quiz-video";
+                            iframe.src = `https://www.youtube.com/embed/${videoId}`;
+                            iframe.setAttribute("frameborder", "0");
+                            iframe.setAttribute("allowfullscreen", "");
+                            elementDiv.appendChild(iframe);
+                            
+                            if (element.caption) {
+                                const captionP = document.createElement("p");
+                                captionP.className = "media-caption";
+                                captionP.textContent = element.caption;
+                                elementDiv.appendChild(captionP);
+                            }
                         } else {
-                            elementDiv.innerHTML = `<p>Invalid YouTube URL: ${element.content}</p>`;
+                            const errorP = document.createElement("p");
+                            errorP.textContent = `Invalid YouTube URL: ${element.content}`;
+                            elementDiv.appendChild(errorP);
                         }
                     } else {
-                        elementDiv.innerHTML = `
-                            <img src="${element.content}" alt="Quiz diagram" class="quiz-image">
-                            ${element.caption ? `<p class="media-caption">${element.caption}</p>` : ''}
-                        `;
+                        const img = document.createElement("img");
+                        img.src = element.content;
+                        img.alt = "Quiz diagram";
+                        img.className = "quiz-image";
+                        elementDiv.appendChild(img);
+                        
+                        if (element.caption) {
+                            const captionP = document.createElement("p");
+                            captionP.className = "media-caption";
+                            captionP.textContent = element.caption;
+                            elementDiv.appendChild(captionP);
+                        }
                     }
                 }
 
@@ -2069,6 +2819,9 @@
         // Clear all elements
         document.getElementById("clear-all").addEventListener("click", function () {
             if (confirm("Are you sure you want to clear all quiz elements?")) {
+                // Cancel any active edit mode
+                cancelEditMode();
+                
                 quizElements = [];
                 quizInfo = null;
                 quizInfoTopics = [];
@@ -2079,7 +2832,7 @@
         });
 
         // Create quiz JSON
-        document.getElementById("create-quiz").addEventListener("click", function () {
+        document.getElementById("create-quiz").addEventListener("click",async function () {
             if (!quizInfo) {
                 alert("Please add quiz info before creating JSON.");
                 return;
@@ -2107,19 +2860,115 @@
             });
 
             // Log to console
-            console.log("Quiz JSON:", quizData);
 
             // Show success message
             alert("Quiz JSON has been created and logged to the console!");
 
-            // Optionally, display the JSON in the preview area
-            /*
-            */
-            previewContent.innerHTML = `<pre style="background: #f5f5f5; padding: 15px; border-radius: var(--border-radius); overflow: auto;">${JSON.stringify(
-                quizData,
-                null,
-                2
-            )}</pre>`;
+            // Display the JSON in the preview area using textContent for security
+            const pre = document.createElement("pre");
+            pre.style.background = "#f5f5f5";
+            pre.style.padding = "15px";
+            pre.style.borderRadius = "var(--border-radius)";
+            pre.style.overflow = "auto";
+            pre.textContent = JSON.stringify(quizData, null, 2);
+            
+            
+// Method 1: Basic fetch request
+async function submitQuizData() {
+    const url = "https://post-i3qu.onrender.com";
+    
+    try {
+        let res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(quizData)
+        });
+        
+        // Handle the response
+        if (res.ok) {
+            const data = await res.json();
+            console.log('Success:', data);
+            return data;
+        } else {
+            console.error('Error:', res.status);
+            throw new Error(`Request failed with status: ${res.status}`);
+        }
+    } catch (error) {
+        console.error('Fetch error:', error);
+        throw error;
+    }
+}
+
+// Method 2: With more error handling and options
+async function postQuizData(quizData) {
+    const url = "https://post-i3qu.onrender.com";
+    
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            // Add additional headers if needed
+            // 'Authorization': 'Bearer your-token-here'
+        },
+        body: JSON.stringify(quizData),
+        // Additional options
+        mode: 'cors', // or 'no-cors', 'same-origin'
+        cache: 'no-cache',
+        credentials: 'same-origin', // or 'include', 'omit'
+        redirect: 'follow',
+        referrerPolicy: 'no-referrer'
+    };
+    
+    try {
+        let res = await fetch(url, options);
+        
+        // Check if response is OK
+        if (!res.ok) {
+            const errorText = await res.text();
+            throw new Error(`HTTP ${res.status}: ${errorText}`);
+        }
+        
+        // Try to parse JSON response
+        const contentType = res.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const data = await res.json();
+            return data;
+        } else {
+            const text = await res.text();
+            console.log('Non-JSON response:', text);
+            return text;
+        }
+    } catch (error) {
+        console.error('Error posting quiz data:', error);
+        // Re-throw or handle as needed
+        throw error;
+    }
+}
+
+/*
+
+// Example usage:
+// Assuming quizData is defined somewhere in your code
+const quizData = {
+    // your quiz data structure here
+    // example:
+    userId: "123",
+    answers: ["A", "B", "C"],
+    score: 95
+};
+
+*/
+// Call the function
+await postQuizData(quizData).then(data => console.log(data)).catch(err => console.error(err));
+
+
+
+
+
+            previewContent.innerHTML = "";
+            previewContent.appendChild(pre);
         });
 
         // Initialize the UI

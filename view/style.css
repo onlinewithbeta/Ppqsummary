@@ -1579,3 +1579,52 @@
    margin-right: 10px;
    font-size: 20px;
   }
+  
+  
+  /* Markdown rendering styles */
+strong {
+    font-weight: bold;
+}
+
+em, i {
+    font-style: italic;
+}
+
+del {
+    text-decoration: line-through;
+}
+
+u {
+    text-decoration: underline;
+}
+
+mark {
+    background-color: var(--highlight-color, #ffeb3b);
+    color: var(--text-primary);
+}
+
+.question-content strong,
+.question-content em,
+.question-content del,
+.question-content u,
+.question-content mark {
+    display: inline;
+}
+
+/* For lists in explanations */
+#explanationContent ul,
+#explanationContent ol {
+    margin-left: 20px;
+    margin-bottom: 10px;
+}
+
+#explanationContent li {
+    margin-bottom: 5px;
+}
+
+/* For headings in explanations */
+#explanationContent h3 {
+    font-size: 1.2em;
+    margin: 15px 0 10px 0;
+    color: var(--primary-color);
+}
