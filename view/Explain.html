@@ -1,0 +1,22 @@
+<html>
+	<body>
+		
+		<div id="div"></div>
+		
+		<script>
+			
+// On the explanation page - retrieve
+window.addEventListener('DOMContentLoaded', () => {
+    let explanationData = sessionStorage.getItem('explanationData');
+    if (explanationData) {
+        // Use the data
+        explanationData = JSON.parse(explanationData)
+        document.getElementById('div').innerHTML = explanationData.content;
+        console.log(explanationData)
+        // Optional: clear the storage
+        sessionStorage.removeItem('explanationData');
+    }
+});
+		</script>
+	</body>
+</html>

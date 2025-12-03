@@ -1,42 +1,36 @@
-console.log(window.location.href)
+console.log(window.location.href);
 
-//Pro user function
-let signUrl = 'https://projectpq.name.ng/pro'; //signInPage
+//url tgo sign in
+let signUrl = "https://projectpq.name.ng/pro"; //signInPage
 
-//get variable to store the user.
+/* User auth */
+
+//The variable that stores the user
 let theUser;
 
-if (!localStorage.getItem('projectpqprouser')) {
+//Try to get the user and take action if no user
+if (!localStorage.getItem("projectpqprouser")) {
  // No user. Redirect to login
-// myAlert('follow', 'Please login', () => window.location.href = signUrl)
+ // myAlert('follow', 'Please login', () => window.location.href = signUrl)
 }
 
+//get user and write him on script
+//theUser = JSON.parse(localStorage.getItem('projectpqprouser')); //Store the user
 
-//get user and write him on script 
-//theUser = JSON.parse(localStorage.getItem('projectpqprouser')); //Store the user 
-console.log(theUser)
-console.log({
-	tyyghj:578,
-})
+//store the accesskey
+let API_key = "56655";
 
-
-//let API_key = theUser.id || '56655';
-let API_key =  '56655';
-
+//Update the user
 async function updateUser(user) {
  theUser = user;
- localStorage.setItem('projectpqprouser', JSON.stringify(user));
- 
+ localStorage.setItem("projectpqprouser", JSON.stringify(user));
+
  // myAlert('confirmation', `You have successful recieved ${thePaper[0].code} ${thePaper[0].session}. \n And you have only ${theUser.tokens} tokens left! `)
 }
 
-
-
-
-
 //Night and day
-let lightImg ="light.png";
-let darkImg ="dark.png";
+let lightImg = "light.png";
+let darkImg = "dark.png";
 //Day and Night theme Function
 function DayOrNigth() {
  if (document.body.classList.contains("dark")) {
@@ -69,9 +63,9 @@ DayOrNigth();
 
 function enableDarkTheme() {
  // Create a style element
- const style = document.createElement('style');
- style.id = 'dark-theme-styles';
- 
+ const style = document.createElement("style");
+ style.id = "dark-theme-styles";
+
  // Define the CSS for dark theme
  style.textContent = `
         /* The Dark theme */
@@ -91,19 +85,19 @@ function enableDarkTheme() {
             --preset-bg-color: var(--ash);
         }
     `;
- 
+
  // Add the style to the document head
  document.head.appendChild(style);
- 
+
  // Optional: Add dark theme class to body for easier targeting
- document.body.classList.add('dark-theme');
+ document.body.classList.add("dark-theme");
 }
 
 function enableLigtTheme() {
  // Create a style element
- const style = document.createElement('style');
- style.id = 'light-theme-styles';
- 
+ const style = document.createElement("style");
+ style.id = "light-theme-styles";
+
  // Define the CSS for dark theme
  style.textContent = `
         /* The light theme */
@@ -125,50 +119,44 @@ function enableLigtTheme() {
    }
 
     `;
- 
+
  // Add the style to the document head
  document.head.appendChild(style);
- 
+
  // Optional: Add dark theme class to body for easier targeting
- document.body.classList.add('light-theme');
+ document.body.classList.add("light-theme");
 }
 
+//Handle the Past Questions.
+let L = ["a", "b", "c", "d", "e", "f", "g", "h", "i"];
+let QuizAnswers = [];
+let nonObjUserAnswers = [];
+let nonObjQuestion = [];
+let userAnswer = [];
+let nonObjAnswer = [];
+let allQuestions = [];
+let pureOBJ = true;
 
-
-
+let thePaper;
+let Topics = [];
 
 //custom functions
 function Id(id) {
  return document.getElementById(id);
 }
 
-
-
-//Handle the Past Questions.
-let L = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'];
-let QuizAnswers = [];
-
-let nonObjUserAnswers = [];
-let nonObjQuestion = [];
-let userAnswer = [];
-let nonObjAnswer = [];
-let allQuestions = []
-let pureOBJ = true;
-
-let thePaper;
-let Topics = [];
-
-//Custom functions
 const DOM = {
- get(selector, storeAs = null) { //get one
+ get(selector, storeAs = null) {
+  //get one
   const element = document.querySelector(selector);
   if (storeAs) {
    this[storeAs] = element;
   }
   return element;
  },
- 
- getAll(selector, storeAs = null) { //get multiple 
+
+ getAll(selector, storeAs = null) {
+  //get multiple
   const elements = document.querySelectorAll(selector);
   if (storeAs) {
    this[storeAs] = elements;
@@ -177,13 +165,14 @@ const DOM = {
  }
 };
 //style elements
-function styleFunc(ele) { //Styling 
+function styleFunc(ele) {
+ //Styling
  return {
-  set: function(pro, value) {
+  set: function (pro, value) {
    ele.style[pro] = value;
    return this; // Return the object for chaining
   },
-  addStyles: function(styles) {
+  addStyles: function (styles) {
    Object.assign(ele.style, styles);
    return this; // Return the object for chaining
   }
@@ -192,10 +181,9 @@ function styleFunc(ele) { //Styling
 //loading function
 var loadingFunc = {
  loader: DOM.get("#Loading"),
- start: () => styleFunc(loadingFunc.loader).set('display', 'block'),
- end: () => styleFunc(loadingFunc.loader).set('display', 'none'),
-}
-
+ start: () => styleFunc(loadingFunc.loader).set("display", "block"),
+ end: () => styleFunc(loadingFunc.loader).set("display", "none")
+};
 
 /*
 
@@ -212,8 +200,6 @@ let PastYear = PastYea.split('/').join('_');
 
 // Splits into ["2022", "2023"], then joins with "_"
 */
-
-
 
 /*
 // Your quiz data
@@ -336,482 +322,504 @@ async function getPQ() {
 
 //Get the question past first
 async function getPQ() {
- 
  loadingFunc.start();
  try {
-  if (!localStorage.getItem('thePaper')) {
+  if (!localStorage.getItem("thePaper")) {
    //No Course saved. Redirect to select course.
-   return myAlert('follow', 'Please select a course and any session', () => window.location.href = "../");
+   return myAlert(
+    "follow",
+    "Please select a course and any session",
+    () => (window.location.href = "../")
+   );
   }
-    let response = await fetch('./view.json');
-    thePaper = await response.json();
-    //thePaper = thePaper.pq;
-  //extra the past question
-  //thePaper = JSON.parse(localStorage.getItem('thePaper')); //Store the user 
-  //Display the past question
+  let response = await fetch("./view.json");
+  thePaper = await response.json();
+  //render the past question
   await pqRender.start(thePaper);
-  //update the user object.
-  //  updateUser(data.user);
-  //end loading 
+  //end loading
   loadingFunc.end();
  } catch (e) {
   loadingFunc.end();
-  if (e.message === 'Failed to failed') {
-   myAlert('warning', 'Please check your internet connection and try again later.');
+  if (e.message === "Failed to failed") {
+   myAlert(
+    "warning",
+    "Please check your internet connection and try again later."
+   );
   } else {
-   myAlert('warning', e.message);
+   myAlert("warning", e.message);
   }
  }
  // let topicFilterAry = topicFilter()
  //pqRender.start(topicFilterAry)
-};
+}
+
 // Function to render markdown-like text
 function renderMarkdown(text) {
-    if (!text) return '';
-    
-    return text
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/_(.*?)_/g, '<em>$1</em>')
-        .replace(/~~(.*?)~~/g, '<del>$1</del>')
-        .replace(/\+\+(.*?)\+\+/g, '<u>$1</u>')
-        .replace(/==(.*?)==/g, '<mark>$1</mark>')
-        .replace(/## (.*?) ##/g, '<h3>$1</h3>')
-        .replace(/\n/g, '<br>');
+ if (!text) return "";
+
+ return text
+  .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+  .replace(/\*(.*?)\*/g, "<em>$1</em>")
+  .replace(/_(.*?)_/g, "<em>$1</em>")
+  .replace(/~~(.*?)~~/g, "<del>$1</del>")
+  .replace(/\+\+(.*?)\+\+/g, "<u>$1</u>")
+  .replace(/==(.*?)==/g, "<mark>$1</mark>")
+  .replace(/## (.*?) ##/g, "<h3>$1</h3>")
+  .replace(/\n/g, "<br>");
 }
 
 const pqRender = {
- start: async (array) => {
+ start: async array => {
   /*Handles the response*/
-  //reseting
-  DOM.get('#Page').innerHTML = '<header id="header"></header>';
+  //reseting the Page
+  DOM.get("#Page").innerHTML = '<header id="header"></header>';
   QuizAnswers = [];
   nonObjUserAnswers = [];
   userAnswer = [];
   nonObjAnswer = [];
   allQuestions = [];
   nonObjQuestion = [];
-  
+
   //go through the each item
-  await array.forEach((item) => {
+  await array.forEach(item => {
    switch (item.type) {
-    case 'pageInfo': // Title
+    case "quizInfo": // Title
+     console.log(item);
      pqRender.title(item);
      break;
-    case 'Question': // Questions 
+    case "Question": // Questions
      pqRender.question(item);
      allQuestions.push(item);
-     
      break;
-    case 'Instruction': //Exam instruction(s)
+    case "Instruction": //Exam instruction(s)
      pqRender.instruction(item);
      break;
-    case 'img': // images
+    case "img": // images
      pqRender.img(item);
      break;
-    case 'media': // Media 
+    case "media": // Media
      pqRender.media(item);
      break;
-    case 'heading': // heading 
+    case "heading": // heading
      pqRender.heading(item);
      break;
-    case 'myAds': // my custom ads
+    case "myAds": // my custom ads
      pqRender.ads(item);
      break;
     default: // the default act
    }
   });
-  
-  //Check if Equations are showing 
+
+  //Check if Equations are showing
   pqRender.equation();
   //answer Button alive
   pqRender.showAns();
-  //animation for overlay images 
+  //animation for overlay images
   theAnim();
  },
- 
- quiz: (array) => {
+
+ quiz: array => {
   /*Handles the response*/
   //reseting
-  DOM.get('#Page').innerHTML = '<header id="header"></header>';
+  DOM.get("#Page").innerHTML = '<header id="header"></header>';
   QuizAnswers = [];
   nonObjUserAnswers = [];
   userAnswer = [];
   nonObjAnswer = [];
-  
-  
+
   //go through the each item
-  array.forEach((item) => {
+  array.forEach(item => {
    switch (item.type) {
-    case 'pageInfo': // Title
+    case "quizInfo": // Title
+     console.log(item);
      pqRender.title(item);
      break;
-    case 'Question': // Questions 
+    case "Question": // Questions
      pqRender.question(item);
      break;
-    case 'Instruction': //Exam instruction(s)
+    case "Instruction": //Exam instruction(s)
      pqRender.instruction(item);
      break;
-    case 'myAds': // my custom ads
+    case "img": // images
+     pqRender.img(item);
+     break;
+    case "media": // Media
+     pqRender.media(item);
+     break;
+    case "heading": // heading
+     pqRender.heading(item);
+     break;
+    case "myAds": // my custom ads
      pqRender.ads(item);
      break;
     default: // the default act
    }
   });
-  
-  //Check if Equations are showing 
+
+  //Check if Equations are showing
   pqRender.equation();
   //answer Button alive
   pqRender.showAns();
-  //animation for overlay images 
+  //animation for overlay images
   theAnim();
  },
- 
+
  //Make equations work
  equation: () => {
   if (window.MathJax) {
-   MathJax.typesetPromise().catch(err => console.log(
-    'MathJax error:', err));
+   MathJax.typesetPromise().catch(err => console.log("MathJax error:", err));
   }
  },
- //Exam title 
- title: function(line) {
-  styleFunc(DOM.get('#quizBtn')).set('display', 'block')
-  
-  /*
-  if (line.kind === 'pureOBJ') {
-   //show start Quiz button
-   styleFunc(DOM.get('#quizBtn')).set('display', 'block')
-  }
-  */
+ //Exam title
+ title: function (line) {
+  styleFunc(DOM.get("#quizBtn")).set("display", "block");
+
   //get the topics array
   Topics = line.Topics;
-  //Create the exam title 
-  let Title = `<h2 id='courseTitle'>${line.quiz_name})</h2>`;
-  let Container = document.createElement('div');
-  Container.id = 'paperTitle';
+  //Create the exam title
+  let Title = `<h2 id='courseTitle'>${line.quiz_name}</h2>`;
+  let Container = document.createElement("div");
+  Container.id = "paperTitle";
   //add the exam title to the DOM
   Container.innerHTML = Title;
-  DOM.get('#header').appendChild(Container);
+  DOM.get("#header").appendChild(Container);
  },
- //Exam Questions 
+ //Exam Questions
  // Inside pqRender object, update the question function:
 
-question: function(line) {
-    //Question container 
-    let question = document.createElement('div');
-    question.className = 'question';
-    
-    //Question head and body
-    question.innerHTML = `<h3 class='Question_Title'>${line.name}</h3>
+ question: function (line) {
+  //Question container
+  let question = document.createElement("div");
+  question.className = "question";
+
+  //Question head and body
+  question.innerHTML = `<h3 class='Question_Title'>${line.name}</h3>
                 <p class="question_Text">
                 ${line.Question.content}
                 </p>`;
-    
-    //Quiz head and body
-    let quizQuestion = document.createElement('div');
-    quizQuestion.className = 'quizQuestion';
-    quizQuestion.innerHTML =
-        `<p>  <b class='Question_Title'> ${line.name} </b> : ${line.Question.content}</p>`;
-    
-    //Handle different question types
-    if (line.Question.type === 'OBJ' || line.Question.type === 'multiple-choice') {
-        //Options container 
-        let options = document.createElement('div');
-        options.className = 'options';
-        let quizOptions = document.createElement('div');
-        quizOptions.className = 'quizOptions';
-        
-        //Arrangements of options
-        for (let i = 0; i < line.Question.options.length; i++) {
-            /*Question Options*/
-            let oneOption = document.createElement('span');
-            
-            // Check if option is text or image
-            if (line.Question.optionType === 'image' && line.Question.options[i].type === "img") {
-                oneOption.innerHTML = `${L[i]}. <img class = 'imgAns thumbnail' src ='${line.Question.options[i].content}' alt ='Option ${L[i]}'/>`;
-            } else if (line.Question.options[i].type === "image") {
-                oneOption.innerHTML = `${L[i]}. <img class = 'imgAns thumbnail' src ='${line.Question.options[i].content}' alt ='Option ${L[i]}'/>`;
-            } else {
-                oneOption.innerText = `${L[i]}. ${line.Question.options[i].content || line.Question.options[i]}`;
-            }
-            
-            options.appendChild(oneOption);
-            
-            /*Quiz Options*/
-            // Create the radio input element
-            const radioInput = document.createElement('input');
-            radioInput.type = 'radio';
-            radioInput.name = line.name;
-            radioInput.id = `${line.name}_${i}`;
-            
-            // Set value based on option type
-            if (line.Question.optionType === 'image' && line.Question.options[i].type === "img") {
-                radioInput.value = line.Question.options[i].content;
-            } else if (line.Question.options[i].type === "image") {
-                radioInput.value = line.Question.options[i].content;
-            } else {
-                radioInput.value = line.Question.options[i].content || line.Question.options[i];
-            }
-            
-            // Create the label element
-            const label = document.createElement('label');
-            label.htmlFor = radioInput.id;
-            
-            // Handle image or text in label
-            if (line.Question.optionType === 'image' && line.Question.options[i].type === "img") {
-                label.innerHTML = `<img class = 'imgAns thumbnail' src ='${line.Question.options[i].content}' alt ='Option ${L[i]}'/>`;
-            } else if (line.Question.options[i].type === "image") {
-                label.innerHTML = `<img class = 'imgAns thumbnail' src ='${line.Question.options[i].content}' alt ='Option ${L[i]}'/>`;
-            } else {
-                label.innerHTML = line.Question.options[i].content || line.Question.options[i];
-            }
-            
-            // container for a quiz option
-            let quizOptionContainer = document.createElement('div');
-            quizOptionContainer.className = 'anOption';
-            
-            // Append all elements to the quizOptions container
-            quizOptionContainer.appendChild(radioInput);
-            quizOptionContainer.appendChild(label);
-            
-            //added to quiz options
-            quizOptions.appendChild(quizOptionContainer);
-            
-            //Mark answer 
-            if (line.Question.optionType === 'image' && line.Question.options[i].type === "img") {
-                if (line.Question.options[i].content === line.Answer.content) {
-                    radioInput.className = 'correctAnswerOpt';
-                    quizOptionContainer.className = 'correctAnswer anOption';
-                }
-            } else if (line.Question.options[i].type === "image") {
-                if (line.Question.options[i].content === line.Answer.content) {
-                    radioInput.className = 'correctAnswerOpt';
-                    quizOptionContainer.className = 'correctAnswer anOption';
-                }
-            } else {
-                if ((line.Question.options[i].content || line.Question.options[i]) === line.Answer.content) {
-                    radioInput.className = 'correctAnswerOpt';
-                    quizOptionContainer.className = 'correctAnswer anOption';
-                }
-            }
-        }
-        
-        //Add options to the questions/quizs container
-        question.appendChild(options);
-        quizQuestion.appendChild(quizOptions);
-    } 
-    else if (line.Question.type === 'subjective') {
-        pureOBJ = false;
-        nonObjAnswer.push(line.Answer.content);
-        nonObjQuestion.push(line.Question.content);
-        
-        //not an obj question.
-        quizQuestion.className = 'quizQuestion nOBJ_Question';
-        
-        // Create the subjective input element
-        const nOBJ_input = document.createElement('textarea');
-        nOBJ_input.className = 'nOBJ_input';
-        nOBJ_input.placeholder = 'Input answer';
-        
-        quizQuestion.appendChild(nOBJ_input);
-    }
-    
-    /* The show answer button*/
-    let ansBtn = document.createElement('button');
-    ansBtn.className = 'ansBtn';
-    ansBtn.innerText = '✅ Show Answer';
-    
-    /*Hidden Answer*/
-    let ANSH = document.createElement('div');
-    ANSH.className = 'answer';
-    ANSH.style.display = 'none';
-    
-    //Answer is just a text or image
-    let ans;
-    if (line.Answer.type === 'image') {
-        ans = `<img class = 'imgAns thumbnail' src='${line.Answer.content}' alt='Answer'/>`;
+
+  //Quiz head and body
+  let quizQuestion = document.createElement("div");
+  quizQuestion.className = "quizQuestion";
+  quizQuestion.innerHTML = `<p>  <b class='Question_Title'> ${line.name} </b> : ${line.Question.content}</p>`;
+
+  //Handle different question types
+  if (
+   line.Question.type === "OBJ" ||
+   line.Question.type === "multiple-choice"
+  ) {
+   //Options container
+   let options = document.createElement("div");
+   options.className = "options";
+   let quizOptions = document.createElement("div");
+   quizOptions.className = "quizOptions";
+
+   //Arrangements of options
+   for (let i = 0; i < line.Question.options.length; i++) {
+    /*Question Options*/
+    let oneOption = document.createElement("span");
+
+    // Check if option is text or image
+    if (
+     line.Question.optionType === "image" ||
+     line.Question.options[i].type === "img"
+    ) {
+     oneOption.innerHTML = `${L[i]}. <img class = 'imgAns thumbnail' src ='${line.Question.options[i].content}' alt ='Option ${L[i]}'/>`;
+    } else if (line.Question.options[i].type === "image") {
+     oneOption.innerHTML = `${L[i]}. <img class = 'imgAns thumbnail' src ='${line.Question.options[i].content}' alt ='Option ${L[i]}'/>`;
     } else {
-        ans = line.Answer.content;
+     oneOption.innerText = `${L[i]}. ${
+      line.Question.options[i].content || line.Question.options[i]
+     }`;
     }
-    
-    QuizAnswers.push(ans);
-    
-    let explainBtn = document.createElement('button');
-    explainBtn.className = 'explainBtn';
-    explainBtn.innerText = 'Explanation';
-    explainBtn.setAttribute('data-explanation', JSON.stringify(line.Explanation));
-    
-    // Add to ANSH
-    ANSH.innerHTML = ans;
-    ANSH.appendChild(explainBtn);
-    
-    const container = document.createElement('div');
-    container.appendChild(ANSH);
-    container.appendChild(ansBtn);
-    
-    question.appendChild(container);
-    quizQuestion.appendChild(container.cloneNode(true));
-    
-    // Event delegation for both containers
-    [question, quizQuestion].forEach(parent => {
-        parent.addEventListener('click', async (e) => {
-            if (e.target.classList.contains('explainBtn')) {
-                const explanationData = e.target.getAttribute('data-explanation');
-                await localStorage.setItem('explanation', explanationData);
-                window.location.href = './explanation';
-                
-                if (window.MathJax) {
-                    MathJax.typesetPromise().catch(err => console.log('MathJax error:', err));
-                }
-            }
-        });
-    });
-    
-    /* Add the Quiz and question elements to the Question paper*/
-    DOM.get('#Page').appendChild(question);
-    DOM.get('#Page').appendChild(quizQuestion);
-},
+
+    options.appendChild(oneOption);
+
+    /*Quiz Options*/
+    // Create the radio input element
+    const radioInput = document.createElement("input");
+    radioInput.type = "radio";
+    radioInput.name = line.name;
+    radioInput.id = `${line.name}_${i}`;
+
+    // Set value based on option type
+    if (
+     line.Question.optionType === "image" &&
+     line.Question.options[i].type === "img"
+    ) {
+     radioInput.value = line.Question.options[i].content;
+    } else if (line.Question.options[i].type === "image") {
+     radioInput.value = line.Question.options[i].content;
+    } else {
+     radioInput.value =
+      line.Question.options[i].content || line.Question.options[i];
+    }
+
+    // Create the label element
+    const label = document.createElement("label");
+    label.htmlFor = radioInput.id;
+
+    // Handle image or text in label
+    if (
+     line.Question.optionType === "image" ||
+     line.Question.options[i].type === "img"
+    ) {
+     label.innerHTML = `<img class = 'imgAns thumbnail' src ='${line.Question.options[i].content}' alt ='Option ${L[i]}'/>`;
+    } else if (line.Question.options[i].type === "image") {
+     label.innerHTML = `<img class = 'imgAns thumbnail' src ='${line.Question.options[i].content}' alt ='Option ${L[i]}'/>`;
+    } else {
+     label.innerHTML =
+      line.Question.options[i].content || line.Question.options[i];
+    }
+
+    // container for a quiz option
+    let quizOptionContainer = document.createElement("div");
+    quizOptionContainer.className = "anOption";
+
+    // Append all elements to the quizOptions container
+    quizOptionContainer.appendChild(radioInput);
+    quizOptionContainer.appendChild(label);
+
+    //added to quiz options
+    quizOptions.appendChild(quizOptionContainer);
+
+    //Mark answer
+    if (
+     line.Question.optionType === "image" &&
+     line.Question.options[i].type === "img"
+    ) {
+     if (line.Question.options[i].content === line.Answer.content) {
+      radioInput.className = "correctAnswerOpt";
+      quizOptionContainer.className = "correctAnswer anOption";
+     }
+    } else if (line.Question.options[i].type === "image") {
+     if (line.Question.options[i].content === line.Answer.content) {
+      radioInput.className = "correctAnswerOpt";
+      quizOptionContainer.className = "correctAnswer anOption";
+     }
+    } else {
+     if (
+      (line.Question.options[i].content || line.Question.options[i]) ===
+      line.Answer.content
+     ) {
+      radioInput.className = "correctAnswerOpt";
+      quizOptionContainer.className = "correctAnswer anOption";
+     }
+    }
+   }
+
+   //Add options to the questions/quizs container
+   question.appendChild(options);
+   quizQuestion.appendChild(quizOptions);
+  } else if (line.Question.type === "subjective") {
+   pureOBJ = false;
+   nonObjAnswer.push(line.Answer.content);
+   nonObjQuestion.push(line.Question.content);
+
+   //not an obj question.
+   quizQuestion.className = "quizQuestion nOBJ_Question";
+
+   // Create the subjective input element
+   const nOBJ_input = document.createElement("textarea");
+   nOBJ_input.className = "nOBJ_input";
+   nOBJ_input.placeholder = "Input answer";
+
+   quizQuestion.appendChild(nOBJ_input);
+  }
+
+  /* The show answer button*/
+  let ansBtn = document.createElement("button");
+  ansBtn.className = "ansBtn";
+  ansBtn.innerText = "✅ Show Answer";
+
+  /*Hidden Answer*/
+  let ANSH = document.createElement("div");
+  ANSH.className = "answer";
+  ANSH.style.display = "none";
+
+  //Answer is just a text or image
+  let ans;
+  if (line.Answer.type === "image" || line.Answer.type === "img") {
+   ans = `<img class = 'imgAns thumbnail' src='${line.Answer.content}' alt='Answer'/>`;
+   ANSH.innerHTML = ans;
+  } else {
+   ans = line.Answer.content;
+   ANSH.innerText = ans;
+  }
+
+  QuizAnswers.push(ans);
+
+  let explainBtn = document.createElement("button");
+  explainBtn.className = "explainBtn";
+  explainBtn.innerText = "Explanation";
+  explainBtn.setAttribute("data-explanation", JSON.stringify(line.Explanation));
+
+  // Add to ANSH
+  ANSH.appendChild(explainBtn);
+
+  const container = document.createElement("div");
+  container.appendChild(ANSH);
+  container.appendChild(ansBtn);
+
+  question.appendChild(container);
+  quizQuestion.appendChild(container.cloneNode(true));
+
+  // Event delegation for both containers
+  [question, quizQuestion].forEach(parent => {
+   parent.addEventListener("click", async e => {
+    if (e.target.classList.contains("explainBtn")) {
+     // Current page - save and redirect
+     const explanationData = e.target.getAttribute("data-explanation");
+     sessionStorage.setItem("explanationData", explanationData);
+     window.location.href = "./Explain.html/";
+
+    if (window.MathJax) {
+      MathJax.typesetPromise().catch(err => console.log("MathJax error:", err));
+     }
+    }
+   });
+  });
+
+  /* Add the Quiz and question elements to the Question paper*/
+  DOM.get("#Page").appendChild(question);
+  DOM.get("#Page").appendChild(quizQuestion);
+ },
  //Show Answers
- showAns: function() {
-  let ansBtns = DOM.getAll('.ansBtn');
-  let answers = DOM.getAll('.answer');
-  let Qtns = DOM.getAll('.question');
-  
+ showAns: function () {
+  let ansBtns = DOM.getAll(".ansBtn");
+  let answers = DOM.getAll(".answer");
+  let Qtns = DOM.getAll(".question");
+
   //Give all the buttons Life.
   for (let i = 0; i < ansBtns.length; i++) {
    ansBtns[i].onclick = () => {
     let ansView = answers[i].style.display;
     //Check if answer is already hidden
-    if (ansView === 'grid') {
-     answers[i].style.display = 'none';
-     ansBtns[i].innerText = '✅ Show Answer';
+    if (ansView === "grid") {
+     answers[i].style.display = "none";
+     ansBtns[i].innerText = "✅ Show Answer";
      //scrollTo(ansBtns[i]);
     } else {
      setTimeout(() => {
       // scrollTo(answers[i]);
      }, 100);
-     answers[i].style.display = 'grid';
-     ansBtns[i].innerText = '❌ Hide Answer';
-    };
-   }
+     answers[i].style.display = "grid";
+     ansBtns[i].innerText = "❌ Hide Answer";
+    }
+   };
   }
  },
  //Display Instructions
-instruction: function(line) {
-    //create instructions container 
-    let InstructionContainer = document.createElement('div');
-    InstructionContainer.className = 'instruction';
-    
-    // Basic markdown rendering function
-    function renderMarkdown(text) {
-        return text
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            .replace(/\*(.*?)\*/g, '<em>$1</em>')
-            .replace(/_(.*?)_/g, '<em>$1</em>')
-            .replace(/~~(.*?)~~/g, '<del>$1</del>')
-            .replace(/\+\+(.*?)\+\+/g, '<u>$1</u>')
-            .replace(/==(.*?)==/g, '<mark>$1</mark>')
-            .replace(/\n/g, '<br>');
-    }
-    
-    //Extract instruction/instructions
-    let instructions = line.content;
-    
-    // check if more than one instructions
-    let InstType = typeof instructions;
-    
-    if (Array.isArray(instructions)) {
-        //multiple instructions
-        InstructionContainer.innerHTML = `<h3> 📌Instructions:</h3>`;
-        let instructionsC = document.createElement('ol');
-        instructionsC.className = 'listOfInstruction';
-        
-        //Add all instructions 
-        instructions.forEach((instruction) => {
-            let anyInstruction = document.createElement('li');
-            anyInstruction.innerHTML = renderMarkdown(instruction);
-            instructionsC.appendChild(anyInstruction);
-        });
-        
-        //Add instructions to instruction container 
-        InstructionContainer.appendChild(instructionsC);
-    } else {
-        //one instruction
-        InstructionContainer.innerHTML = 
-            `📌 <strong>Instruction:</strong> ${renderMarkdown(instructions)}`;
-    }
-    
-    //Add instruction container to visible DOM
-    DOM.get('#header').appendChild(InstructionContainer);
-},
- // Display image
- img: function(line) {
-    //Create image container, img element and the caption container.
-    let imageContainer = document.createElement('div');
-    let image = document.createElement('img');
-    let imageCaption = document.createElement('div');
-    
-    //add the caption and give class name 
-    imageCaption.innerHTML = line.caption || 'Use the Image to answer Questions';
-    imageCaption.className = 'imageCaption';
-    
-    //add the image 
-    image.alt = line.alt || 'Fig X';
-    image.className = 'Figure thumbnail';
-    image.src = line.content;
-    
-    //Add to the image container 
-    imageContainer.className = 'imageContainer';
-    imageContainer.appendChild(image);
-    imageContainer.appendChild(imageCaption);
-    
-    //Add to the DOM 
-    DOM.get('#Page').appendChild(imageContainer);
-},
- //Display media
- media: function(line) {
-  
+ instruction: function (line) {
+  //create instructions container
+  let InstructionContainer = document.createElement("div");
+  InstructionContainer.className = "instruction";
+
+  // Basic markdown rendering function
+  function renderMarkdown(text) {
+   return text
+    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*(.*?)\*/g, "<em>$1</em>")
+    .replace(/_(.*?)_/g, "<em>$1</em>")
+    .replace(/~~(.*?)~~/g, "<del>$1</del>")
+    .replace(/\+\+(.*?)\+\+/g, "<u>$1</u>")
+    .replace(/==(.*?)==/g, "<mark>$1</mark>")
+    .replace(/\n/g, "<br>");
+  }
+
+  //Extract instruction/instructions
+  let instructions = line.content;
+
+  // check if more than one instructions
+  let InstType = typeof instructions;
+
+  if (Array.isArray(instructions)) {
+   //multiple instructions
+   InstructionContainer.innerHTML = `<h3> 📌Instructions:</h3>`;
+   let instructionsC = document.createElement("ol");
+   instructionsC.className = "listOfInstruction";
+
+   //Add all instructions
+   instructions.forEach(instruction => {
+    let anyInstruction = document.createElement("li");
+    anyInstruction.innerHTML = renderMarkdown(instruction);
+    instructionsC.appendChild(anyInstruction);
+   });
+
+   //Add instructions to instruction container
+   InstructionContainer.appendChild(instructionsC);
+  } else {
+   //one instruction
+   InstructionContainer.innerHTML = `📌 <strong>Instruction:</strong> ${renderMarkdown(
+    instructions
+   )}`;
+  }
+
+  //Add instruction container to visible DOM
+  DOM.get("#header").appendChild(InstructionContainer);
  },
+ // Display image
+ img: function (line) {
+  //Create image container, img element and the caption container.
+  let imageContainer = document.createElement("div");
+  let image = document.createElement("img");
+  let imageCaption = document.createElement("div");
+
+  //add the caption and give class name
+  imageCaption.innerHTML = line.caption || "Use the Image to answer Questions";
+  imageCaption.className = "imageCaption";
+
+  //add the image
+  image.alt = line.alt || "Fig X";
+  image.className = "Figure thumbnail";
+  image.src = line.content;
+
+  //Add to the image container
+  imageContainer.className = "imageContainer";
+  imageContainer.appendChild(image);
+  imageContainer.appendChild(imageCaption);
+
+  //Add to the DOM
+  DOM.get("#Page").appendChild(imageContainer);
+ },
+ //Display media
+ media: function (line) {},
  //Display a heading
- heading: function(line) {
+ heading: function (line) {
   //Create heading container, h2, text under heading
-  let heading = document.createElement('header');
-  let headingContainer = document.createElement('h2');
-  let subHeadingContainer = document.createElement('span');
+  let heading = document.createElement("header");
+  let headingContainer = document.createElement("h2");
+  let subHeadingContainer = document.createElement("span");
   //The main heading
-  heading.className = 'heading';
-  headingContainer.className = 'innerheading';
+  heading.className = "heading";
+  headingContainer.className = "innerheading";
   headingContainer.innerHTML = line.heading || line.content;
   heading.appendChild(headingContainer);
   //if there is subheading
   if (line.Subheading) {
-   subHeadingContainer.className = 'innerSubheading';
+   subHeadingContainer.className = "innerSubheading";
    subHeadingContainer.innerHTML = line.Subheading;
    heading.appendChild(subHeadingContainer);
-   
   }
-  DOM.get('#Page').appendChild(heading);
- },
+  DOM.get("#Page").appendChild(heading);
+ }
 };
 
 function showAllAns() {
- let ansBtns = DOM.getAll('.ansBtn');
- let answers = DOM.getAll('.answer');
- 
+ let ansBtns = DOM.getAll(".ansBtn");
+ let answers = DOM.getAll(".answer");
+
  //Give all the buttons Life.
  for (let i = 0; i < ansBtns.length; i++) {
-  answers[i].style.display = 'grid';
-  ansBtns[i].innerText = '❌ Hide Answer';
-  scrollTo(DOM.get('#header'));
+  answers[i].style.display = "grid";
+  ansBtns[i].innerText = "❌ Hide Answer";
+  scrollTo(DOM.get("#header"));
  }
- 
 }
 
 let url = `https://procourses-v3yo.onrender.com/procourses/${API_key}`;
 //getPQ(`${url}/paper/${PastCourse}/${PastYear}`)
-getPQ('./view.json');
-
+getPQ("./view.json");
 
 function randomItems(original, amount, shuffle) {
  // Make a copy of the original array to avoid modifying it
@@ -825,8 +833,7 @@ function randomItems(original, amount, shuffle) {
  }
  // Return the first 'numberOfItems' elements
  return newArray.slice(0, amount);
-}; //select elements
-
+} //select elements
 
 //For the GES quiz
 function enableGESQuiz(amount) {
@@ -834,173 +841,178 @@ function enableGESQuiz(amount) {
  //get all the questions
  let theQuestions = thePaper.slice(2); //Remove head
  theQuestions = randomItems(theQuestions, amount); //select elements
- 
- let gesExam = [thePaper[0],
-  thePaper[1],
-  ...theQuestions
- ];
+
+ let gesExam = [thePaper[0], thePaper[1], ...theQuestions];
  //gesExam
  pqRender.start(gesExam);
  loadingFunc.end();
 }
 
-
 /*---------------Quiz Handler ----------*/
-//get the questions, options, Quiz questions 
-let normalQuestions = document.querySelectorAll('.question');
-let quizQuestions = document.querySelectorAll('.quizQuestion');
-let options = document.querySelectorAll('.anOption');
-
+//get the questions, options, Quiz questions
+let normalQuestions = document.querySelectorAll(".question");
+let quizQuestions = document.querySelectorAll(".quizQuestion");
+let options = document.querySelectorAll(".anOption");
 
 //Request and Exit Quiz Buttons
-let quizBtn = getElement('#quizBtn');
-let exitQuizBtn = getElement('#exitQuizBtn');
-
+let quizBtn = getElement("#quizBtn");
+let exitQuizBtn = getElement("#exitQuizBtn");
 
 //functions
-
 
 // Main function to initialize the quiz settings
 function reqQuizSetting(questionConfig, timeConfig) {
  // Initialize elements
- const timeSlider = document.getElementById('timeSlider');
- const timeInput = document.getElementById('timeInput');
- const timePresetsContainer = document.getElementById('timePresets');
- const timeMinMarker = document.getElementById('timeMinMarker');
- const timeMaxMarker = document.getElementById('timeMaxMarker');
- 
- const questionsSlider = document.getElementById('questionsSlider');
- const questionsInput = document.getElementById('questionsInput');
- const questionsPresetsContainer = document.getElementById('questionsPresets');
- const questionsMinMarker = document.getElementById('questionsMinMarker');
- const questionsMaxMarker = document.getElementById('questionsMaxMarker');
- 
- const shuffleCheckbox = document.getElementById('shuffleQuestions');
- const strictMode = document.getElementById('strictMode');
- const startButton = document.getElementById('startQuizBtn');
- const cancelButton = document.getElementById('cancelQuizSettings');
- 
+ const timeSlider = document.getElementById("timeSlider");
+ const timeInput = document.getElementById("timeInput");
+ const timePresetsContainer = document.getElementById("timePresets");
+ const timeMinMarker = document.getElementById("timeMinMarker");
+ const timeMaxMarker = document.getElementById("timeMaxMarker");
+
+ const questionsSlider = document.getElementById("questionsSlider");
+ const questionsInput = document.getElementById("questionsInput");
+ const questionsPresetsContainer = document.getElementById("questionsPresets");
+ const questionsMinMarker = document.getElementById("questionsMinMarker");
+ const questionsMaxMarker = document.getElementById("questionsMaxMarker");
+
+ const shuffleCheckbox = document.getElementById("shuffleQuestions");
+ const strictMode = document.getElementById("strictMode");
+ const startButton = document.getElementById("startQuizBtn");
+ const cancelButton = document.getElementById("cancelQuizSettings");
+
  // Set up time configuration
  timeSlider.min = timeConfig.min;
  timeSlider.max = timeConfig.max;
  timeSlider.value = timeConfig.default;
- 
+
  timeInput.min = timeConfig.min;
  timeInput.max = timeConfig.max;
  timeInput.value = timeConfig.default;
- 
+
  timeMinMarker.textContent = `${timeConfig.min} min`;
  timeMaxMarker.textContent = `${timeConfig.max} mins`;
- 
+
  // Generate time preset buttons
- generatePresetButtons(timePresetsContainer, timeConfig, 'time', timeConfig.default);
- 
+ generatePresetButtons(
+  timePresetsContainer,
+  timeConfig,
+  "time",
+  timeConfig.default
+ );
+
  // Set up questions configuration
  questionsSlider.min = questionConfig.min;
  questionsSlider.max = questionConfig.max;
  questionsSlider.value = questionConfig.default;
- 
+
  questionsInput.min = questionConfig.min;
  questionsInput.max = questionConfig.max;
  questionsInput.value = questionConfig.default;
- 
+
  questionsMinMarker.textContent = questionConfig.min;
  questionsMaxMarker.textContent = questionConfig.max;
- 
+
  // Generate questions preset buttons
- generatePresetButtons(questionsPresetsContainer, questionConfig, 'questions', questionConfig.default);
- 
+ generatePresetButtons(
+  questionsPresetsContainer,
+  questionConfig,
+  "questions",
+  questionConfig.default
+ );
+
  // Timer state update function
  function updateTimerState(value) {
   const time = parseInt(value, 10);
-  
+
   // Update slider and input field values
   timeSlider.value = time;
   timeInput.value = time;
-  
+
   // Update active state for preset buttons
   updateActivePresetButtons(timePresetsContainer, time);
-  
+
   // Update slider track background
   updateSliderTrack(timeSlider, time, timeConfig.min, timeConfig.max);
  }
- 
+
  // Questions state update function
  function updateQuestionsState(value) {
   const questions = parseInt(value, 10);
-  
+
   // Update slider and input field values
   questionsSlider.value = questions;
   questionsInput.value = questions;
-  
+
   // Update active state for preset buttons
   updateActivePresetButtons(questionsPresetsContainer, questions);
-  
+
   // Update slider track background
-  updateSliderTrack(questionsSlider, questions, questionConfig.min, questionConfig.max);
+  updateSliderTrack(
+   questionsSlider,
+   questions,
+   questionConfig.min,
+   questionConfig.max
+  );
  }
- 
+
  // Function to update the slider track color dynamically
  function updateSliderTrack(slider, value, min, max) {
   const percentage = ((value - min) / (max - min)) * 100;
   const color = `linear-gradient(to right, var(--blue) ${percentage}%, var(--transparentBlack) ${percentage}%)`;
   slider.style.background = color;
  }
- 
+
  // Function to generate preset buttons
  function generatePresetButtons(container, config, type, defaultValue) {
-  container.innerHTML = '';
-  
+  container.innerHTML = "";
+
   // Calculate number of preset buttons based on interval
   let numPresets = Math.floor((config.max - config.min) / config.interval) + 1;
   let previousValue = 4000;
-  
+
   for (let i = 0; i < numPresets; i++) {
-   let value = config.min + (i * config.interval);
+   let value = config.min + i * config.interval;
    value = Math.round(value / 10) * 10;
    if (value < 1) {
     value = 1;
    }
    if (value <= config.max) {
-    //No repeating 
+    //No repeating
     if (previousValue !== value) {
-     const button = document.createElement('button');
-     button.className = type === 'time' ? 'preset-btn' : 'questions-preset-btn';
+     const button = document.createElement("button");
+     button.className = type === "time" ? "preset-btn" : "questions-preset-btn";
      button.dataset[type] = value;
-     button.textContent = type === 'time' ? `${value} mins` : value;
-     
+     button.textContent = type === "time" ? `${value} mins` : value;
+
      // Mark the default value as active
      if (value === defaultValue) {
-      button.classList.add('active');
-      
+      button.classList.add("active");
      }
-     
+
      container.appendChild(button);
      previousValue = value;
-     
     }
    }
-   
   }
  }
- 
+
  // Function to update active state of preset buttons
  function updateActivePresetButtons(container, value) {
-  const buttons = container.querySelectorAll('button');
+  const buttons = container.querySelectorAll("button");
   buttons.forEach(button => {
    const buttonValue = parseInt(button.textContent, 10);
-   button.classList.toggle('active', buttonValue === value);
+   button.classList.toggle("active", buttonValue === value);
   });
  }
- 
+
  // --- Event Listeners ---
- 
+
  // Timer event listeners
- timeSlider.addEventListener('input', (e) => {
+ timeSlider.addEventListener("input", e => {
   updateTimerState(e.target.value);
  });
- 
- timeInput.addEventListener('input', (e) => {
+
+ timeInput.addEventListener("input", e => {
   let value = parseInt(e.target.value, 10);
   if (isNaN(value) || value < timeConfig.min) {
    value = timeConfig.min;
@@ -1010,13 +1022,13 @@ function reqQuizSetting(questionConfig, timeConfig) {
   }
   updateTimerState(value);
  });
- 
+
  // Questions event listeners
- questionsSlider.addEventListener('input', (e) => {
+ questionsSlider.addEventListener("input", e => {
   updateQuestionsState(e.target.value);
  });
- 
- questionsInput.addEventListener('input', (e) => {
+
+ questionsInput.addEventListener("input", e => {
   let value = parseInt(e.target.value, 10);
   if (isNaN(value) || value < questionConfig.min) {
    value = questionConfig.min;
@@ -1026,47 +1038,51 @@ function reqQuizSetting(questionConfig, timeConfig) {
   }
   updateQuestionsState(value);
  });
- 
+
  // Preset button event listeners (delegated)
- document.addEventListener('click', (e) => {
-  if (e.target.matches('.preset-btn')) {
+ document.addEventListener("click", e => {
+  if (e.target.matches(".preset-btn")) {
    updateTimerState(e.target.dataset.time);
-  } else if (e.target.matches('.questions-preset-btn')) {
+  } else if (e.target.matches(".questions-preset-btn")) {
    updateQuestionsState(e.target.dataset.questions);
   }
  });
- 
+
  // Control button event listeners
  startButton.onclick = () => {
   const time = Number(timeSlider.value);
   const questions = Number(questionsSlider.value);
   const shuffle = shuffleCheckbox.checked;
   const strict = strictMode.checked;
-  myAlert('follow', `Starting quiz with ${questions} questions, ${time} minute timer, and shuffle ${shuffle ? 'enabled' : 'disabled'} in ${strict ? ' strict' : 'open book'} mode!`);
-  
+  myAlert(
+   "follow",
+   `Starting quiz with ${questions} questions, ${time} minute timer, and shuffle ${
+    shuffle ? "enabled" : "disabled"
+   } in ${strict ? " strict" : "open book"} mode!`
+  );
+
   // Your quiz start logic goes here
-  startQuiz({ questions, time, shuffle, strict })
+  startQuiz({ questions, time, shuffle, strict });
  };
- 
+
  cancelButton.onclick = () => {
-  styleFunc(DOM.get('#setTimeConBf')).set('display', 'none')
-  myAlert('info','Settings selection cancelled');
+  styleFunc(DOM.get("#setTimeConBf")).set("display", "none");
+  myAlert("info", "Settings selection cancelled");
   // Logic to close the component or modal
  };
- 
+
  // Initial state setup
  updateTimerState(timeConfig.default);
  updateQuestionsState(questionConfig.default);
 }
 
-
 async function reqQuiz() {
  await pqRender.start(thePaper);
- 
+
  // Configuration objects
  let question = {
   min: 1,
-  max: document.querySelectorAll('.question').length,
+  max: document.querySelectorAll(".question").length,
   default: 10,
   interval: 5
  };
@@ -1077,28 +1093,27 @@ async function reqQuiz() {
   interval: 4
  };
  reqQuizSetting(question, time);
- console.log(question)
+ console.log(question);
  //permission to start the timer
- getElement('#setTimeConBf').style.display = 'block';
+ getElement("#setTimeConBf").style.display = "block";
 }
 quizBtn.onclick = reqQuiz;
 
 function exitQuiz() {
- normalQuestions = document.querySelectorAll('.question');
- quizQuestions = document.querySelectorAll('.quizQuestion');
- options = document.querySelectorAll('.anOption');
- 
- 
+ normalQuestions = document.querySelectorAll(".question");
+ quizQuestions = document.querySelectorAll(".quizQuestion");
+ options = document.querySelectorAll(".anOption");
+
  clearInterval(timerInterval); // Clear any existing timer
  //Make the interface to normal studying
- getElement('#quizBtn').style.display = 'block';
- getElement('#submitBtn').style.display = 'none';
- getElement('#exitQuizBtn').style.display = 'none';
- getElement('#countdown').style.display = 'none';
- 
+ getElement("#quizBtn").style.display = "block";
+ getElement("#submitBtn").style.display = "none";
+ getElement("#exitQuizBtn").style.display = "none";
+ getElement("#countdown").style.display = "none";
+
  pqRender.start(thePaper);
- scrollTo(DOM.get('#header'));
- 
+ scrollTo(DOM.get("#header"));
+
  /*
  normalQuestions = document.querySelectorAll('.question');
  quizQuestions = document.querySelectorAll('.quizQuestion');
@@ -1116,120 +1131,109 @@ function exitQuiz() {
 }
 exitQuizBtn.onclick = exitQuiz;
 
-
-
-const countdownDisplay = getElement('#countdown');
-const startBtn = getElement('#startBtn');
+const countdownDisplay = getElement("#countdown");
+const startBtn = getElement("#startBtn");
 let timeLeft; // 6 minutes in seconds
 let timerInterval;
 
 async function startQuiz(quizPrefers) {
- console.log('User set', quizPrefers)
+ console.log("User set", quizPrefers);
  let quizPQ = allQuestions;
- 
+
  quizPQ = randomItems(quizPQ, quizPrefers.questions, quizPrefers.shuffle);
- 
- await pqRender.start([thePaper[0],
-  thePaper[1],
-  ...quizPQ
- ]);
- 
+
+ await pqRender.start([thePaper[0], thePaper[1], ...quizPQ]);
+
  //strict - open book mode
- const ansBtns = DOM.getAll('.ansBtn');
+ const ansBtns = DOM.getAll(".ansBtn");
  if (quizPrefers.strict) {
-  ansBtns.forEach((ansBtn) => {
-   styleFunc(ansBtn).set('display', 'none')
+  ansBtns.forEach(ansBtn => {
+   styleFunc(ansBtn).set("display", "none");
   });
  } else {
-  ansBtns.forEach((ansBtn) => {
-   styleFunc(ansBtn).set('display', 'block')
+  ansBtns.forEach(ansBtn => {
+   styleFunc(ansBtn).set("display", "block");
   });
-  
  }
  //Get settings first. Time, Questions, shuffle------
  let min = quizPrefers.time;
- 
- 
- 
- 
- 
+
  // Render quiz
- getElement('#quizBtn').style.display = 'none';
- getElement('#submitBtn').style.display = 'block';
- getElement('#exitQuizBtn').style.display = 'block';
- 
- normalQuestions = document.querySelectorAll('.question');
- quizQuestions = document.querySelectorAll('.quizQuestion');
- options = document.querySelectorAll('.anOption');
- 
- 
- options.forEach((option) => {
-  let inputs = option.querySelectorAll('input');
-  inputs.forEach((input) => input.checked = false);
-  option.style = 'background-color : transparent'
+ getElement("#quizBtn").style.display = "none";
+ getElement("#submitBtn").style.display = "block";
+ getElement("#exitQuizBtn").style.display = "block";
+
+ normalQuestions = document.querySelectorAll(".question");
+ quizQuestions = document.querySelectorAll(".quizQuestion");
+ options = document.querySelectorAll(".anOption");
+
+ options.forEach(option => {
+  let inputs = option.querySelectorAll("input");
+  inputs.forEach(input => (input.checked = false));
+  option.style = "background-color : transparent";
  });
- 
- normalQuestions.forEach((normalQuestion) => normalQuestion
-  .style.display = 'none');
- 
- quizQuestions.forEach((quizQuestion) => quizQuestion.style
-  .display = 'block');
- 
- 
- 
- //starting timer 
- 
+
+ normalQuestions.forEach(
+  normalQuestion => (normalQuestion.style.display = "none")
+ );
+
+ quizQuestions.forEach(quizQuestion => (quizQuestion.style.display = "block"));
+
+ //starting timer
+
  //Display Count Down
- getElement('#countdown').style.display = 'grid';
- 
+ getElement("#countdown").style.display = "grid";
+
  //convert to seconds
  timeLeft = min * 60;
- 
+
  function updateCountDown() {
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
-  
+
   // Add leading zeros if needed
-  const display = `${minutes.toString().padStart(2, '0')} : ${seconds.toString().padStart(2, '0')}`;
+  const display = `${minutes.toString().padStart(2, "0")} : ${seconds
+   .toString()
+   .padStart(2, "0")}`;
   countdownDisplay.style.backgroundColor = `#00FF6B`;
   countdownDisplay.textContent = display;
  }
- 
+
  function startTimer() {
   updateCountDown();
-  
+
   clearInterval(timerInterval); // Clear any existing timer
-  
+
   timerInterval = setInterval(() => {
    timeLeft--;
    updateCountDown();
-   let criticalMoment = min * 60 / 5;
-   
+   let criticalMoment = (min * 60) / 5;
+
    if (timeLeft < criticalMoment) {
     //critical moment
     countdownDisplay.style.backgroundColor = `red`;
-   } else {}
+   } else {
+   }
    if (timeLeft <= 0) {
-    //End of timer 
+    //End of timer
     clearInterval(timerInterval);
     countdownDisplay.textContent = "00:00";
     //submit Paper. says pens up!
-    alert('Pens Up!');
+    alert("Pens Up!");
     submitFunc();
    }
   }, 1000);
  }
  startTimer();
- 
+
  //All codes ran
- getElement('#setTimeConBf').style.display = 'none';
- scrollTo(DOM.get('#header'));
- 
+ getElement("#setTimeConBf").style.display = "none";
+ scrollTo(DOM.get("#header"));
 }
 
 //End Quiz
-getElement('#submitBtn').onclick = () => {
- submitFunc()
+getElement("#submitBtn").onclick = () => {
+ submitFunc();
 };
 /* Moved results to a seperate Page 
 getElement('#closeResult').onclick = () => {
@@ -1239,7 +1243,6 @@ getElement('#closeResult').onclick = () => {
 };
 */
 
-
 //get the user's answers/submit
 async function submitFunc() {
  /*
@@ -1247,121 +1250,116 @@ async function submitFunc() {
  Get all the user answer.
  Check correct and give score.
  */
- loadingFunc.start()
- 
+ loadingFunc.start();
+
  clearInterval(timerInterval); // Clear any existing timer
  let nOBJresultSheet;
- 
- 
+
  if (!pureOBJ) {
-  
   //Get subjective answers
-  nonObjUserAnswers = []; //user answers array 
+  nonObjUserAnswers = []; //user answers array
   //Get new subjective answers
-  const userInputs = DOM.getAll('.nOBJ_input');
-  userInputs.forEach((nObjUserAns) => {
+  const userInputs = DOM.getAll(".nOBJ_input");
+  userInputs.forEach(nObjUserAns => {
    nonObjUserAnswers.push(nObjUserAns.value);
-  })
+  });
   let nObjSheet = [];
-  
+
   if (nonObjUserAnswers.length == nonObjAnswer.length) {
    for (let i = 0; i < nonObjUserAnswers.length; i++) {
     let objans = nonObjUserAnswers[i];
-    if (!objans) objans = 'No answer'
+    if (!objans) objans = "No answer";
     const nObj_item = {
      nonObjQuestion: nonObjQuestion[i],
      userAnswer: objans,
      correctAns: nonObjAnswer[i]
     };
-    nObjSheet.push(nObj_item) //Ready the inputs and answers.
+    nObjSheet.push(nObj_item); //Ready the inputs and answers.
    }
-   console.log()
+   console.log();
    if (nObjSheet.length > 0) nOBJresultSheet = await nOBJmaker(nObjSheet);
-   
   }
  }
- 
- 
+
  async function nOBJmaker(nOBJ) {
-  const url = 'https://subjectivemaker.onrender.com';
-  
+  const url = "https://subjectivemaker.onrender.com";
+
   try {
    const response = await fetch(url, {
-    method: 'POST',
+    method: "POST",
     headers: {
-     'Content-Type': 'application/json',
+     "Content-Type": "application/json"
     },
     body: JSON.stringify({
      exampaper: nOBJ
     })
    });
-   
+
    if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
    }
-   
+
    const result = await response.json();
    return result;
-   
   } catch (error) {
-   myAlert('warning', 'Error marking Subjective answers.');
+   myAlert("warning", "Error marking Subjective answers.");
   }
  }
- 
+
  //return nOBJ.map(() => Math.round(Math.random()));
- 
- // Score is zero by default 
+
+ // Score is zero by default
  let score = 0;
- 
- let quizOptions = DOM.getAll('.quizOptions');
- //get the selected answer 
+
+ let quizOptions = DOM.getAll(".quizOptions");
+ //get the selected answer
  for (let i = 0; i < quizOptions.length; i++) {
-  //selected option 
-  let ans = quizOptions[i].querySelector('input:checked');
-  let correctAns = await quizOptions[i].querySelector('.correctAnswerOpt');
-  
+  //selected option
+  let ans = quizOptions[i].querySelector("input:checked");
+  let correctAns = await quizOptions[i].querySelector(".correctAnswerOpt");
+
   //the text
   let label;
-  
+
   if (ans) {
    userAnswer[i] = ans;
    label = ans.parentElement;
    if (userAnswer[i] !== correctAns) {
-    label.style = 'background : red';
+    label.style = "background : red";
    }
   } else {
-   userAnswer[i] = 'null';
+   userAnswer[i] = "null";
   }
-  
-  //check if correct 
+
+  //check if correct
   if (userAnswer[i] === correctAns) {
    score++;
   }
- };
+ }
  let highestScore = quizOptions.length;
- 
+
  if (nOBJresultSheet) {
-  let nOBJinputElements = DOM.getAll('.nOBJ_input')
+  let nOBJinputElements = DOM.getAll(".nOBJ_input");
   for (let i = 0; i < nOBJresultSheet.length; i++) {
-   styleFunc(nOBJinputElements[i]).set('color', 'var(--white)')
-   
+   styleFunc(nOBJinputElements[i]).set("color", "var(--white)");
+
    if (nOBJresultSheet[i]) {
     score++;
-    styleFunc(nOBJinputElements[i]).set('background', 'var(--cAns)')
+    styleFunc(nOBJinputElements[i]).set("background", "var(--cAns)");
    } else {
-    styleFunc(nOBJinputElements[i]).set('background', 'var(--red)')
+    styleFunc(nOBJinputElements[i]).set("background", "var(--red)");
    }
    highestScore++;
   }
  }
- 
+
  //Not OBJ.
  /*
  DOM.getAll('.nOBJ_input', 'nOBJ_input');
  DOM.getAll('.nOBJ_crtAns', 'nOBJ_crtAnsS');
  DOM.getAll('.nOBJ_Question', 'nOBJ_Questions');
  */
- 
+
  /*
  //Check if answer is correct 
  for (let i = 0; i < quizQuestions.length; i++) {
@@ -1370,147 +1368,134 @@ async function submitFunc() {
    } else {}
  }
  */
- 
- //Results 
+
+ //Results
  let results = [highestScore, score];
- localStorage.setItem('results', JSON.stringify(results))
- console.log(results)
- 
- myAlert('info', `You scored ${score} out of ${highestScore}`)
- //highlight correct answers 
- let options = DOM.getAll('.correctAnswer');
- options.forEach((option) => styleFunc(option).set('background-color', 'var(--cAns)'));
- 
- //show all correct answers 
+ localStorage.setItem("results", JSON.stringify(results));
+ console.log(results);
+
+ myAlert("info", `You scored ${score} out of ${highestScore}`);
+ //highlight correct answers
+ let options = DOM.getAll(".correctAnswer");
+ options.forEach(option =>
+  styleFunc(option).set("background-color", "var(--cAns)")
+ );
+
+ //show all correct answers
  showAllAns();
- 
- loadingFunc.end()
- 
+
+ loadingFunc.end();
+
  // window.location.href = './result';
  //displayResult(quizOptions, score);
 }
 
-
-//Topic filter 
+//Topic filter
 function topicFilter() {
  const Topics = thePaper[0].topics;
  let topicFilterArray = [];
- 
+
  for (let i = 0; i < Topics.length; i++) {
   //Add the heading
   topicFilterArray.push({
-   type: 'heading',
+   type: "heading",
    heading: Topics[i]
-  })
-  
+  });
+
   for (let j = 0; j < thePaper.length; j++) {
    const topic = Topics[i];
    const qTopic = thePaper[j].topic;
    if (qTopic) {
     for (let k = 0; k < qTopic.length; k++) {
      if (topic === qTopic[k]) {
-      topicFilterArray.push(thePaper[j])
+      topicFilterArray.push(thePaper[j]);
      }
     }
-    
    }
-   
   }
-  
  }
  return topicFilterArray;
- 
- 
 }
-
 
 //Animations
 function theAnim() {
  //Variables
  const thumbnails = document.querySelectorAll(`.thumbnail`);
- const popupOverlay = getElement('#popupOverlay');
- const popupImage = getElement('#popupImage');
- const closeBtn = getElement('#closeBtn');
- const loadingSpinner = getElement('#loadingSpinner');
- 
- 
+ const popupOverlay = getElement("#popupOverlay");
+ const popupImage = getElement("#popupImage");
+ const closeBtn = getElement("#closeBtn");
+ const loadingSpinner = getElement("#loadingSpinner");
+
  // Add click event to each thumbnail with animation
  thumbnails.forEach(thumbnail => {
   thumbnail.onclick = () => {
    popupImage.src = thumbnail.src;
    popupImage.alt = thumbnail.alt;
-   
+
    // Show loading spinner
-   loadingSpinner.style.display = 'block';
-   
+   loadingSpinner.style.display = "block";
+
    // Display the popup overlay with animation
-   popupOverlay.style.display = 'flex';
+   popupOverlay.style.display = "flex";
    setTimeout(() => {
-    popupOverlay.classList.add('active');
-    
+    popupOverlay.classList.add("active");
    }, 10);
-   
+
    // Set the popup image source
    popupImage.onload = () => {
-    loadingSpinner.style.display = 'none';
+    loadingSpinner.style.display = "none";
    };
-   
+
    // Prevent scrolling on the body when popup is open
-   document.body.style.overflow = 'hidden';
-  }
+   document.body.style.overflow = "hidden";
+  };
  });
- 
+
  // Close popup with animation
  function closePopup() {
-  popupOverlay.classList.remove('active');
+  popupOverlay.classList.remove("active");
   setTimeout(() => {
-    popupOverlay.style.display = 'none';
-    document.body.style.overflow = 'auto';
-   },
-   300);
+   popupOverlay.style.display = "none";
+   document.body.style.overflow = "auto";
+  }, 300);
  }
- 
+
  // Close popup when close button is clicked
- closeBtn.addEventListener('click',
-  function() {
-   closePopup();
-  });
- 
+ closeBtn.addEventListener("click", function () {
+  closePopup();
+ });
+
  // Close popup when clicking outside the image
- popupOverlay.addEventListener('click',
-  (e) => {
-   if (e.target === popupOverlay) {
-    closePopup();
-   }
-  });
- 
+ popupOverlay.addEventListener("click", e => {
+  if (e.target === popupOverlay) {
+   closePopup();
+  }
+ });
+
  // Close popup when pressing Escape key
- document.addEventListener('keydown',
-  function(e) {
-   if (e.key === 'Escape' && popupOverlay.style.display === 'flex') {
-    closePopup();
-   }
-  });
+ document.addEventListener("keydown", function (e) {
+  if (e.key === "Escape" && popupOverlay.style.display === "flex") {
+   closePopup();
+  }
+ });
 }
 
 //Explaintion
 //Our control handles
-const explanationContainer = getElement('#explanationContainer');
-const xExplainBtn = getElement('#xExplain');
-const explainDiv = getElement('#explanationContent');
-
+const explanationContainer = getElement("#explanationContainer");
+const xExplainBtn = getElement("#xExplain");
+const explainDiv = getElement("#explanationContent");
 
 //Functions
 function showExplanation() {
- explanationContainer.style = 'display: grid';
- document.body.style.overflow = 'hidden';
- 
+ explanationContainer.style = "display: grid";
+ document.body.style.overflow = "hidden";
 }
 
 function XExplanation() {
- document.body.style.overflow = 'auto';
- explanationContainer.style = 'display: none';
- explainDiv.innerHTML = ' ';
+ document.body.style.overflow = "auto";
+ explanationContainer.style = "display: none";
+ explainDiv.innerHTML = " ";
 }
 
 //Handling the Explanation types
@@ -1519,177 +1504,172 @@ function explanationIsString(TheExp) {
 }
 
 function explanationIsImg(TheExp) {
- explainDiv.style = 'display: grid';
- let TheExpImg = document.createElement('img');
- TheExpImg.className = 'explainImg';
+ explainDiv.style = "display: grid";
+ let TheExpImg = document.createElement("img");
+ TheExpImg.className = "explainImg";
  TheExpImg.src = TheExp;
  explainDiv.appendChild(TheExpImg);
 }
 
 function explanationIsImgs(TheExp) {
- TheExp.forEach((img) => explanationIsImg(img));
+ TheExp.forEach(img => explanationIsImg(img));
 }
 
 function explanationIsVideo(TheExp) {
  // Create the video element
- const video = document.createElement('video');
+ const video = document.createElement("video");
  video.controls = true;
- video.className = 'explainVid';
- 
+ video.className = "explainVid";
+
  // Create the source element
- const source = document.createElement('source');
+ const source = document.createElement("source");
  source.src = TheExp;
- source.type = 'video/mp4';
- 
+ source.type = "video/mp4";
+
  // Append the source to the video
  video.appendChild(source);
- 
+
  // Append the video to the document body (or any other element)
  explainDiv.appendChild(video);
 }
 
 function explanationIsYoutubeVid(TheExp) {
- 
  // Create iframe
- const iframe = document.createElement('iframe');
+ const iframe = document.createElement("iframe");
  iframe.src = `https://www.youtube.com/embed/${TheExp}`;
- iframe.frameBorder = '0';
- iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+ iframe.frameBorder = "0";
+ iframe.allow =
+  "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
  iframe.allowFullscreen = true;
- iframe.className = 'explainVid';
+ iframe.className = "explainVid";
  // Append elements
  explainDiv.appendChild(iframe);
 }
 
 function explainFunc(content, type) {
-    loadingFunc.start();
-    explainDiv.innerHTML = ' ';
-    
-    switch (type) {
-        case 'string':
-            // Render markdown for string content
-            explainDiv.innerHTML = renderMarkdown(content);
-            break;
-        case 'img':
-            explanationIsImg(content);
-            break;
-        case 'imgs':
-            explanationIsImgs(content);
-            break;
-        case 'video':
-            explanationIsVideo(content);
-            break;
-        case 'youtubeVideo':
-            explanationIsYoutubeVid(content);
-            break;
-        default:
-            console.log('unknown Explanation format');
-            explainDiv.innerHTML = renderMarkdown(content);
-    }
-    
-    //Display the explanation.
-    showExplanation();
-    theAnim();
-    loadingFunc.end();
+ loadingFunc.start();
+ explainDiv.innerHTML = " ";
+
+ switch (type) {
+  case "string":
+   // Render markdown for string content
+   explainDiv.innerHTML = renderMarkdown(content);
+   break;
+  case "img":
+   explanationIsImg(content);
+   break;
+  case "imgs":
+   explanationIsImgs(content);
+   break;
+  case "video":
+   explanationIsVideo(content);
+   break;
+  case "youtubeVideo":
+   explanationIsYoutubeVid(content);
+   break;
+  default:
+   console.log("unknown Explanation format");
+   explainDiv.innerHTML = renderMarkdown(content);
+ }
+
+ //Display the explanation.
+ showExplanation();
+ theAnim();
+ loadingFunc.end();
 }
 
-
 xExplainBtn.onclick = XExplanation;
-xExplainBtn.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAAFhSURBVGiB7ZgxTgMxEEW/d88A8QEQEuISHIL1HSi4Bg09DTdIBeIA3IKOPqJIT8AeGppEm+V7PQ5gzSsjzR//zaz914BhGIZhGDwCdBK8yOXRdfVeYXEjwYsM6NkaRwkP6OH851bhckXV5iLBy9YPy1XvgPRTXUep75gYbajAqGbwkanljEi6pRvPZK+WRGqU6fGYWnTpmGloZy2ghhktzezmmmY0tX7tKWr/u7Nnu2QhNUb04C9prU2j+FDLWVjNnU/ldGYWWNMEoGQEmH84akUd1byUa0Yzr6kHP9aMdug8TILdbVohOXOh8R9gozVGEy97E9tvEwdiExGlidDYRIxv4sOqiU/dJi4f/vp1EJW1ZFg8lzaaYkpDhuM7RoO8MnUXuQvIZa+W666Yes7I++acblzAqOYmnTC1lBH3uH5BjKcAkFK6r3UTD3ybEXkCAMSPM/fw9lqrl2EYhmE0xxdPjuZmUX53AAAAAABJRU5ErkJggg==';
+xExplainBtn.src =
+ "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAAFhSURBVGiB7ZgxTgMxEEW/d88A8QEQEuISHIL1HSi4Bg09DTdIBeIA3IKOPqJIT8AeGppEm+V7PQ5gzSsjzR//zaz914BhGIZhGDwCdBK8yOXRdfVeYXEjwYsM6NkaRwkP6OH851bhckXV5iLBy9YPy1XvgPRTXUep75gYbajAqGbwkanljEi6pRvPZK+WRGqU6fGYWnTpmGloZy2ghhktzezmmmY0tX7tKWr/u7Nnu2QhNUb04C9prU2j+FDLWVjNnU/ldGYWWNMEoGQEmH84akUd1byUa0Yzr6kHP9aMdug8TILdbVohOXOh8R9gozVGEy97E9tvEwdiExGlidDYRIxv4sOqiU/dJi4f/vp1EJW1ZFg8lzaaYkpDhuM7RoO8MnUXuQvIZa+W666Yes7I++acblzAqOYmnTC1lBH3uH5BjKcAkFK6r3UTD3ybEXkCAMSPM/fw9lqrl2EYhmE0xxdPjuZmUX53AAAAAABJRU5ErkJggg==";
 
 //my custom selector
-//scrolling function 
+//scrolling function
 function scrollTo(targetElement) {
  targetElement.scrollIntoView({
-  behavior: 'smooth',
-  block: 'center'
+  behavior: "smooth",
+  block: "center"
  });
 }
 
-function getElements(ele) { return document.querySelectorAll(ele) };
+function getElements(ele) {
+ return document.querySelectorAll(ele);
+}
 
-function getElement(ele) { return document.querySelector(ele) };
+function getElement(ele) {
+ return document.querySelector(ele);
+}
 
 function myAlert(kind, message, okFunction = null) {
- const overlay = document.getElementById('alertOverlay');
- const header = document.getElementById('alertHeader');
- const icon = document.getElementById('alertIcon');
- const title = document.getElementById('alertTitle');
- const body = document.getElementById('alertMessage');
- const footer = document.getElementById('alertFooter');
- 
+ const overlay = document.getElementById("alertOverlay");
+ const header = document.getElementById("alertHeader");
+ const icon = document.getElementById("alertIcon");
+ const title = document.getElementById("alertTitle");
+ const body = document.getElementById("alertMessage");
+ const footer = document.getElementById("alertFooter");
+
  // Clear previous buttons
- footer.innerHTML = '';
- 
+ footer.innerHTML = "";
+
  // Set message
  body.textContent = message;
- 
+
  // Configure based on kind
  switch (kind) {
-  case 'info':
-   header.className = 'alertHeader info';
-   icon.textContent = 'ℹ️';
-   title.textContent = 'Information';
-   addButton('OK', 'infoButton', () => hideAlert());
+  case "info":
+   header.className = "alertHeader info";
+   icon.textContent = "ℹ️";
+   title.textContent = "Information";
+   addButton("OK", "infoButton", () => hideAlert());
    break;
-   
-  case 'warning':
-   header.className = 'alertHeader warning';
-   icon.textContent = '⚠️';
-   title.textContent = 'Warning';
-   addButton('OK', 'warningButton', () => hideAlert());
+
+  case "warning":
+   header.className = "alertHeader warning";
+   icon.textContent = "⚠️";
+   title.textContent = "Warning";
+   addButton("OK", "warningButton", () => hideAlert());
    break;
-   
-  case 'follow':
-   header.className = 'alertHeader confirmation';
-   icon.textContent = 'ℹ️';
-   title.textContent = 'Note';
-   addButton('OK', 'infoButton', () => {
+
+  case "follow":
+   header.className = "alertHeader confirmation";
+   icon.textContent = "ℹ️";
+   title.textContent = "Note";
+   addButton("OK", "infoButton", () => {
     if (okFunction) okFunction();
     hideAlert();
    });
    break;
-   
-  case 'confirmation':
-   header.className = 'alertHeader confirmation';
-   icon.textContent = '❓';
-   title.textContent = 'Confirm';
-   addButton('Cancel', 'cancelButton', () => hideAlert());
-   
-   addButton('OK', 'confirmButton', () => {
+
+  case "confirmation":
+   header.className = "alertHeader confirmation";
+   icon.textContent = "❓";
+   title.textContent = "Confirm";
+   addButton("Cancel", "cancelButton", () => hideAlert());
+
+   addButton("OK", "confirmButton", () => {
     if (okFunction) okFunction();
     hideAlert();
    });
    break;
-   
+
   default:
-   header.className = 'alertHeader info';
-   icon.textContent = 'ℹ️';
-   title.textContent = 'Alert';
-   addButton('OK', 'infoButton', () => hideAlert());
+   header.className = "alertHeader info";
+   icon.textContent = "ℹ️";
+   title.textContent = "Alert";
+   addButton("OK", "infoButton", () => hideAlert());
  }
- 
+
  // Show the alert
- overlay.style.display = 'flex';
- 
+ overlay.style.display = "flex";
+
  function addButton(text, className, onClick) {
-  const button = document.createElement('button');
+  const button = document.createElement("button");
   button.className = `alertButton ${className}`;
   button.textContent = text;
-  button.addEventListener('click', onClick);
+  button.addEventListener("click", onClick);
   footer.appendChild(button);
  }
- 
+
  function hideAlert() {
-  overlay.style.display = 'none';
+  overlay.style.display = "none";
  }
 }
-setTimeout(() => {
- myAlert(
-  "confirmation",
-  "Do you have past questions? (Soft/hardcopies) . Please send it to us💚🎓.",
-  () => {
-   window.open(`https://wa.me/9117624342`, "_blank");
-  }
- );
-}, 60000);
